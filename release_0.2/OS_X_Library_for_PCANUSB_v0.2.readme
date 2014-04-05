@@ -1,0 +1,58 @@
+OS X Library for PCAN-USB Interfaces (x86_64)
+
+Copyright (C) 2013 by UV Software, Berlin
+
+
+libPCBUSB
+~~~~~~~~~
+
+The PCBUSB library realizes a 'PCAN-USB Driver for OS X' using Apple«s IOUSBKit.
+It supports up to 8 PCAN-USB devices from PEAK-System Technik, Darmstadt.
+See the header-file PCBUSB.h for details.
+
+PCAN is a registered trademark of PEAK-System Technik GmbH, Darmstadt.
+
+This software is freeware without any warranty or support!
+
+Change-Log:
+- Version 0.2 of 09/08/2013: 
+  Minor changes
+- Version 0.1 of 06/30/2013: 
+  Initial revision
+
+Limitations:
+- CAN_Initialize:
+  Only PCAN-USB devices are supported; and only the first CAN channel of a 
+  PCAN-USB device. 
+- CAN_Reset:
+  Only the queue(s) of the driver will be cleared; not on the CAN device.
+- CAN_Read:
+  Time-stamps are taken from high-resolution OS timer instead of taking 
+  them from the internal 16-bit timer on the CAN device.
+- CAN_Write:
+  Transmission of the given message on the CAN bus is not acknowledged 
+  by the USB interface.
+- CAN_FilterMessages:
+  Message filtering is currently not supported.
+- CAN_GetValue:
+  Only parameter PCAN_CHANNEL_VERSION, PCAN_HARDWARE_NAME and some 
+  undocumented extensions are supported.
+- CAN_SetValue:
+  Only parameter PCAN_EXT_LOG_USB is supported. Be careful when using this 
+  parameter, it creates a lot of data on your hard disk.
+- CAN_GetErrorText:
+  Only neutral/english language (code 0x00) is supported.
+
+Known bugs and caveats
+- Due to the latency between the completions of the isochronous transaction on 
+  the USB bus and servicing of the callback function, on slowed down systems a 
+  mysterious repetition of already processed URBs may occur. In this case speed 
+  up your system and everything works fine. 
+
+
+Contact
+~~~~~~~
+
+E-Mail:  mailto:info@mac-can.com
+Internet: http://www.mac-can.com
+
