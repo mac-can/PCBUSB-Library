@@ -1,6 +1,6 @@
 ### macOS&reg; Library for PCAN-USB Interfaces
 
-Copyright &copy; 2013-2020 by UV Software, Berlin.
+Copyright &copy; 2013-2021 by UV Software, Berlin.
 
 # Running CAN and CAN FD on a Mac&reg;
 
@@ -12,7 +12,7 @@ The PCAN-USB FD device can be operated in CAN 2.0 and CAN FD mode.
 
 ## PCBUSB library
 
-The dynamic library libPCBUSB is running under macOS 10.13 and later (x86_64 architecture).
+The dynamic library libPCBUSB is running under macOS 10.13 and later (Intel architecture and Apple silicon).
 The API is almost compatible to PEAK´s PCANBasic DLL on Windows.
 See the [MacCAN](https://www.mac-can.com/) website for details.
 
