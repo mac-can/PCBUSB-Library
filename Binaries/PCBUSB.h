@@ -1,4 +1,4 @@
-/* -- $HeadURL: http://svn.uv-software.com/opensource/mac/CAN/PCANUSB/Library/trunk/drv/pcan_api.h $ --
+/* -- $HeadURL: https://svn.uv-software.com/MacCAN/PCANUSB/Library/trunk/drv/pcan_api.h $ --
  *
  *	project   :  CAN - Controller Area Network
  *
@@ -154,6 +154,7 @@ extern "C" {
 #define PCAN_EXT_RX_QUE_OVERRUN  0x84  //!< UVS: receive queue overrun counter
 #define PCAN_EXT_HARDWARE_VERSION 133  //!< UVS: version number of the hardware interface
 #define PCAN_EXT_SOFTWARE_VERSION 134  //!< UVS: version number of the driver respectively library
+#define PCAN_EXT_RECEIVE_CALLBACK 135  //!< UVS: callback function called on the reception of an URB
 #define PCAN_EXT_LOG_USB         0x8F  //!< UVS: Log USB communication (URB buffer <==> CAN messages)
 
 /* PCAN parameter values
