@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 		return errno;
 	}
 	status = CAN_Initialize(PCAN_CHANNEL, PCAN_BAUDRATE, 0, 0, 0);
-	printf("Initialize CAN: 0x%lx\n", status);
+	printf("Initialize CAN: 0x%x\n", status);
 	if(status != PCAN_ERROR_OK) goto leave;
 
 	status = CAN_GetValue(PCAN_CHANNEL, PCAN_RECEIVE_EVENT, &fd, sizeof(int));
@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
 	while(select(fd+1, &fds, NULL, NULL, NULL) > 0) {
 		status = CAN_Read(PCAN_CHANNEL, &message, NULL);
 		if (status != PCAN_ERROR_OK) {
-			printf("Error 0x%lx\n", status);
+			printf("Error 0x%x\n", status);
 			break;
 		}
 		printf("  - R ID:%4x LEN:%1x DATA:%02x %02x %02x %02x %02x %02x %02x %02x\n",
