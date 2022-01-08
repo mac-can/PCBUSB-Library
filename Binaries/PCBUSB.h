@@ -6,7 +6,7 @@
  *
  *	copyright :  (C) 2012-2020 by UV Software, Berlin
  *
- *	compiler  :  Apple clang version 11.0.3 (clang-1103.0.32.62)
+ *	compiler  :  Apple clang version 12.0.0 (clang-1200.0.32.27)
  *
  *	export    :  TPCANStatus CAN_Initialize(TPCANHandle Channel, TPCANBaudrate Btr0Btr1, TPCANType HwType, DWORD IOPort, WORD Interrupt);
  *	             TPCANStatus CAN_Uninitialize(TPCANHandle Channel);
@@ -43,7 +43,7 @@
  *	Up to 8 devices are supported.
  *
  *	Version of PCAN API:
- *	- Based on PEAK's version of 10/28/2019
+ *	- Based on PEAK's version of 10/15/2020
  */
 
 #ifndef PCAN_API_H_INCLUDED
@@ -75,6 +75,7 @@
 #ifndef LPSTR
 #define LPSTR	char*
 #endif
+#define __T(s)	s
 #endif
 
 /* Defined and supported PCAN channels
@@ -253,6 +254,13 @@
 #define PCAN_MESSAGE_ERRFRAME    0x40U  //!< The PCAN message represents an error frame
 #define PCAN_MESSAGE_STATUS      0x80U  //!< The PCAN message represents a PCAN status message
 
+/* LookUp Parameters
+ */
+#define LOOKUP_DEVICE_TYPE        __T("devicetype")       //!< Lookup channel by Device type (see PCAN devices e.g. PCAN_USB)
+#define LOOKUP_DEVICE_ID          __T("deviceid")         //!< Lookup channel by device id
+#define LOOKUP_CONTROLLER_NUMBER  __T("controllernumber") //!< Lookup channel by CAN controller 0-based index
+#define LOOKUP_IP_ADDRESS         __T("ipaddress")        //!< Lookup channel by IP address (LAN channels only)
+
 /* Frame Type / Initialization Mode
  */
 #define PCAN_MODE_STANDARD       PCAN_MESSAGE_STANDARD
@@ -342,6 +350,19 @@ typedef struct tagTPCANMsgFD
     BYTE              DLC;     //!< Data Length Code of the message (0..15)
     BYTE              DATA[64];//!< Data of the message (DATA[0]..DATA[63])
 } TPCANMsgFD;
+
+/** Describes an available PCAN channel
+ */
+typedef struct tagTPCANChannelInformation
+{
+    TPCANHandle channel_handle;                 //!< PCAN channel handle   
+    TPCANDevice device_type;                    //!< Kind of PCAN device
+    BYTE controller_number;                     //!< CAN-Controller number
+    DWORD device_features;                      //!< Device capabilities flag (see FEATURE_*)
+    char device_name[MAX_LENGTH_HARDWARE_NAME]; //!< Device name
+    DWORD device_id;                            //!< Device number   
+    DWORD channel_condition;                    //!< Availability status of a PCAN-Channel          
+}TPCANChannelInformation;
 
 
 /*  -----------  variables  ----------------------------------------------
@@ -532,7 +553,7 @@ TPCANStatus CAN_SetValue(
         TPCANHandle Channel,
         TPCANParameter Parameter,
         void* Buffer,
-		DWORD BufferLength);
+        DWORD BufferLength);
 
 /** @brief       Returns a descriptive text of a given TPCANStatus error code, in any desired language.
  *
@@ -549,6 +570,18 @@ TPCANStatus CAN_GetErrorText(
         TPCANStatus Error,
         WORD Language,
         LPSTR Buffer);
+
+/** @brief       Finds a PCAN-Basic channel that matches with the given parameters
+ *
+ *  @param[in]   Parameters    A comma separated string contained pairs of parameter-name/value
+ *                             to be matched within a PCAN-Basic channel
+ *  @param[out]  FoundChannel  Buffer for returning the PCAN-Basic channel, when found
+ *
+ *  @returns     A TPCANStatus error code.
+ */
+TPCANStatus CAN_LookUpChannel(
+        LPSTR Parameters,
+        TPCANHandle* FoundChannel);
 
 #ifdef __cplusplus
 }

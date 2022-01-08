@@ -16,10 +16,15 @@ Mac and macOS are trademarks of Apple Inc., registered in the U.S. and other cou
 This software is freeware without any warranty or support!
 
 Change-Log:
+- Version 0.10 of 12/22/2020:
+  Support of PCAN-USB Pro FD devices, but only the first channel (CAN1).
+  Set linker options -install_name, -compatibility_version, and -current_version.
+  Synchronized the API with Peak´s PCANBasic version 4.5.0.440
+  Updated the Python example: reworked the output format.
 - Version 0.9 of 06/25/2020:
   Data types from <MacTypes.h> as replacement for Peak´s usage of Windows BYTE, 
   WORD, DWORD and UINT64 (field CAN ID is now 32-bit wide).
-  Synchronized the API to Peak´s PCANBasic version 4.4.0.288
+  Synchronized the API with Peak´s PCANBasic version 4.4.0.288
   Parameter PCAN_DEVICE_ID can be read in pre-initialization state.
   Fixed some bugs with status bit: PCAN_ERROR_QXMTFULL, PCAN_ERROR_XMTFULL, 
   PCAN_ERROR_QOVERRUN, PCAN_ERROR_BUSLIGHT.
@@ -68,7 +73,10 @@ Change-Log:
 
 Limitations:
 - CAN_Initialize:
-  Only PCAN-USB devices and PCAN-USB FD devices are supported. 
+  Only the following devices are supported:
+  - PCAN-USB (item no. IPEH-002021 and IPEH-002022)
+  - PCAN-USB FD (item no. IPEH-004022)
+  - PCAN-USB Pro FD (item no. IPEH-004061), but only the first channel (CAN1)
 - CAN_Write:
   Transmission of the given message on the CAN bus is not acknowledged by
   the USB interface.
@@ -84,15 +92,25 @@ Limitations:
 - Writing into a trace file:
   Only 100'000 frames can be recorded into one trace file.
   An existing trace file with the same file name will be overwritten.
+- CAN_LookUpChannel:
+  Channel searching is currently not supported.
 
 Known bugs and caveats
-- The LED of the PCAN-USB FD device is not switch on (green) when the device
-  is plugged into the USB. This is due to the fact that there is no 'driver'
-  for PCAN-USB devices. So the LED of the PCAN-USB FD device cannot signal the
-  presence of a driver. When operating the LED signals the correct operation
-  state of the PCAN-USB FD device (blinking green, or red on error).
-- The device number cannot be changed for PCAN-USB FD devices (function
-  CAN_SetValue, parameter PCAN_DEVICE_ID).
+- The LED of the PCAN-USB FD device is not turned on (green) when the device
+  is plugged into the USB bus. This is due to the fact that there is no 'real'
+  driver for PCAN-USB devices under macOS. So the LED of the PCAN-USB FD device
+  cannot signal the presence of a driver. When operating the LED signals the
+  correct operation state of the PCAN-USB FD device (blinking green, or red
+  on error).
+- The same LED issue is for the PCAN-USB Pro FD device. The LED for the first
+  channel signals its operation state only when operated by an application.
+- The second channel of the PCAN-USB Pro FD device is not supported by the
+  driver. It is not listed in the device list; its LED is turned off.
+- The device number cannot be changed for PCAN-USB FD devices and PCAN-USB Pro
+  FD devices (function CAN_SetValue, parameter PCAN_DEVICE_ID).
+- When a device is used by another process this cannot be detected by a call
+  to CAN_GetValue with parameter PCAN_CHANNEL_CONDITION. The occupied device
+  is shown as PCAN_CHANNEL_AVAILABLE to the own process.
 - When a successfully initialized PCAN-USB device is physically removed from
   USB any subsequent call of API functions (e.g. CAN_Read) will not succeed
   even when the device is plugged in again. An error code will be returned in
