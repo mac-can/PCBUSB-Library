@@ -4,7 +4,7 @@
  *
  *	purpose   :  PCAN Application Programming Interface
  *
- *	copyright :  (C) 2013 by UV Software, Berlin
+ *	copyright :  (C) 2013-2014 by UV Software, Berlin
  *
  *	compiler  :  GCC - GNU C Compiler (4.2.1)
  *
@@ -65,6 +65,9 @@ extern "C" {
 #endif
 #ifndef DWORD
 #define DWORD	unsigned long
+#endif
+#ifndef QWORD
+#define QWORD	unsigned long long
 #endif
 #ifndef LPSTR
 #define LPSTR	char*
@@ -149,6 +152,8 @@ extern "C" {
 #define PCAN_EXT_RX_COUNTER      0x82  //!< UVS: number of received frames
 #define PCAN_EXT_ERR_COUNTER     0x83  //!< UVS: number of error frames
 #define PCAN_EXT_RX_QUE_OVERRUN  0x84  //!< UVS: receive queue overrun counter
+#define PCAN_EXT_HARDWARE_VERSION 133  //!< UVS: version number of the hardware interface
+#define PCAN_EXT_SOFTWARE_VERSION 134  //!< UVS: version number of the driver respectively library
 #define PCAN_EXT_LOG_USB         0x8F  //!< UVS: Log USB communication (URB buffer <==> CAN messages)
 
 /* PCAN parameter values
