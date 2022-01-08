@@ -16,6 +16,11 @@ Mac and OS X are trademarks of Apple Inc., registered in the U.S. and other coun
 This software is freeware without any warranty or support!
 
 Change-Log:
+- Version 0.5 of 11/23/2014:
+  Feature 'Reading/Writing of parameter PCAN_DEVICE_NUMBER' implemented.
+  Fixed issue #104 'Hot plugging was not detected by the library/driver'.
+  Fixed issue #117 'Permission for libPCBUSB.x.y.lib wrong' (chmod 755).
+  Return codes of API functions harmonized with PCANBasic.dll (1.3.3.61).
 - Version 0.4 of 02/23/2014:
   Time-stamps are now taken from CAN controller instead of taking them from the
   system clock. 
@@ -41,19 +46,23 @@ Limitations:
   Only PCAN-USB devices are supported; and only the first CAN channel of a 
   PCAN-USB device. 
 - CAN_Write:
-  Transmission of the given message on the CAN bus is not acknowledged 
-  by the USB interface.
+  Transmission of the given message on the CAN bus is not acknowledged by
+  the USB interface.
 - CAN_FilterMessages:
   Message filtering is currently not supported.
 - CAN_GetValue/CAN_SetValue:
-  Still unsupported parameter are: PCAN_DEVICE_NUMBER, PCAN_5VOLTS_POWER,
-  PCAN_RECEIVE_EVENT, PCAN_MESSAGE_FILTER, PCAN_BUSOFF_AUTORESET, PCAN_LOG_*,
-  PCAN_RECEIVE_STATUS, PCAN_CONTROLLER_NUMBER, PCAN_CHANNEL_IDENTIFYING.
+  Still unsupported parameter are: PCAN_5VOLTS_POWER, PCAN_RECEIVE_EVENT,
+  PCAN_MESSAGE_FILTER, PCAN_BUSOFF_AUTORESET, PCAN_LOG_*, PCAN_RECEIVE_STATUS,
+  PCAN_CONTROLLER_NUMBER, PCAN_CHANNEL_IDENTIFYING.
 - Writing trace files:
   Only 100'000 frames can be recorded into one trace file.
   An existing trace file with the same file name will be overwritten.
 
 Known bugs and caveats
+- When a successfully initialized PCAN-USB device is physically removed from
+  USB any subsequent call of API functions (e.g. CAN_Read) will not succeed
+  even when the device is plugged in again. An error code will be returned in
+  this case.
 - Due to the latency between the completions of the isochronous transaction on 
   the USB bus and servicing of the callback function, on slowed down systems a 
   mysterious repetition of already processed URBs may occur. In this case speed 
