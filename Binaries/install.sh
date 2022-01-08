@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ProjName=PCBUSB
-ProjVersion=0.7
+ProjVersion=0.8
 BaseDir=$(dirname $0)
 InstallDir=/usr/local/lib
 IncludeDir=/usr/local/include

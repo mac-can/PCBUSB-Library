@@ -4,9 +4,9 @@
  *
  *	purpose   :  PCAN Application Programming Interface
  *
- *	copyright :  (C) 2013-2016 by UV Software, Berlin
+ *	copyright :  (C) 2012-2017 by UV Software, Berlin
  *
- *	compiler  :  Apple LLVM version 8.0 (clang-800.0.38)
+ *	compiler  :  Apple LLVM version 8.1.0 (clang-802.0.42)
  *
  *	export    :  TPCANStatus CAN_Initialize(TPCANHandle Channel, TPCANBaudrate Btr0Btr1, TPCANType HwType, DWORD IOPort, WORD Interrupt);
  *	             TPCANStatus CAN_Uninitialize(TPCANHandle Channel);
@@ -18,6 +18,10 @@
  *	             TPCANStatus CAN_GetValue(TPCANHandle Channel, TPCANParameter Parameter, void* Buffer, DWORD BufferLength);
  *	             TPCANStatus CAN_SetValue(TPCANHandle Channel, TPCANParameter Parameter, void* Buffer, DWORD BufferLength);
  *	             TPCANStatus CAN_GetErrorText(TPCANStatus Error, WORD Language, LPSTR Buffer);
+ *	             *** CAN FD capable devices ***
+ *	             TPCANStatus CAN_InitializeFD(TPCANHandle Channel, TPCANBitrateFD BitrateFD);
+ *	             TPCANStatus CAN_ReadFD(TPCANHandle Channel, TPCANMsgFD* MessageBuffer, TPCANTimestampFD* TimestampBuffer);
+ *	             TPCANStatus CAN_WriteFD(TPCANHandle Channel, TPCANMsgFD* MessageBuffer);
  *
  *	includes  :  (none)
  *
@@ -31,13 +35,15 @@
  *	PCAN API  -  PEAK CAN Application Programming Interface
  *
  *	This Application Programming Interface (API) is a nearly compatible
- *	implementation of the PEAK PCANBasic DLL on macOS (Darwin Kernel 16.0.0).
+ *	implementation of the PEAK PCANBasic DLL on macOS (Darwin Kernel 16.x.x).
  *
  *	Supported CAN Interfaces:
- *	- PCAN-USB (up to 8 device; only the 1st channel is supported)
+ *	- PCAN-USB
+ *	- PCAN-USB FD
+ *	Up to 8 devices are supported.
  *
  *	Version of PCAN API:
- *	- Based on PEAK«s version of 05/18/2016
+ *	- Based on PEAK«s version of 06/21/2017
  */
 
 #ifndef PCAN_API_H_INCLUDED
@@ -68,6 +74,9 @@ extern "C" {
 #endif
 #ifndef QWORD
 #define QWORD	unsigned long long
+#endif
+#ifndef UINT64
+#define UINT64	QWORD
 #endif
 #ifndef LPSTR
 #define LPSTR	char*
@@ -160,14 +169,20 @@ extern "C" {
 #define PCAN_BUSSPEED_DATA       0x1BU  //!< Configured CAN data speed as Bits per seconds
 #define PCAN_IP_ADDRESS          0x1CU  //!< Remote address of a LAN channel as string in IPv4 format
 #define PCAN_LAN_SERVICE_STATUS  0x1DU  //!< Status of the Virtual PCAN-Gateway Service
+#define PCAN_ALLOW_STATUS_FRAMES 0x1EU  //!< Status messages reception status within a PCAN-Channel
+#define PCAN_ALLOW_RTR_FRAMES    0x1FU  //!< RTR messages reception status within a PCAN-Channel
+#define PCAN_ALLOW_ERROR_FRAMES  0x20U  //!< Error messages reception status within a PCAN-Channel
+#define PCAN_INTERFRAME_DELAY    0x21U  //!< Delay, in microseconds, between sending frames
+#define PCAN_ACCEPTANCE_FILTER_11BIT 0x22U  //!< Filter over code and mask patterns for 11-Bit messages
+#define PCAN_ACCEPTANCE_FILTER_29BIT 0x23U  //!< Filter over code and mask patterns for 29-Bit messages
 #define PCAN_EXT_BTR0BTR1        0x80U  //!< UVS: bit-timing register
 #define PCAN_EXT_TX_COUNTER      0x81U  //!< UVS: number of transmitted frames
 #define PCAN_EXT_RX_COUNTER      0x82U  //!< UVS: number of received frames
 #define PCAN_EXT_ERR_COUNTER     0x83U  //!< UVS: number of error frames
 #define PCAN_EXT_RX_QUE_OVERRUN  0x84U  //!< UVS: receive queue overrun counter
-#define PCAN_EXT_HARDWARE_VERSION 133U  //!< UVS: version number of the hardware interface
-#define PCAN_EXT_SOFTWARE_VERSION 134U  //!< UVS: version number of the driver respectively library
-#define PCAN_EXT_RECEIVE_CALLBACK 135U  //!< UVS: callback function called on the reception of an URB
+#define PCAN_EXT_HARDWARE_VERSION 0x85U //!< UVS: version number of the interface firmware
+#define PCAN_EXT_SOFTWARE_VERSION 0x86U //!< UVS: version number of the driver respectively library
+#define PCAN_EXT_RECEIVE_CALLBACK 0x87U //!< UVS: callback function called on the reception of an URB
 #define PCAN_EXT_LOG_USB         0x8FU  //!< UVS: Log USB communication (URB buffer <==> CAN messages)
 
 /* PCAN parameter values
@@ -197,6 +212,7 @@ extern "C" {
 #define TRACE_FILE_OVERWRITE     0x80U  //!< Causes the overwriting of available traces (same name)
 
 #define FEATURE_FD_CAPABLE       0x01U  //!< Device supports flexible data-rate (CAN-FD)
+#define FEATURE_DELAY_CAPABLE    0x02U  //!< Device supports a delay between sending frames (FPGA based USB devices)
 
 #define SERVICE_STATUS_STOPPED   0x01U  //!< The service is not running
 #define SERVICE_STATUS_RUNNING   0x04U  //!< The service is running
@@ -216,11 +232,11 @@ extern "C" {
 #define PCAN_MODE_STANDARD       PCAN_MESSAGE_STANDARD
 #define PCAN_MODE_EXTENDED       PCAN_MESSAGE_EXTENDED
 
-// Baud rate codes = BTR0/BTR1 register values for the CAN controller.
-// You can define your own Baud rate with the BTROBTR1 register.
-// Take a look at www.peak-system.com for our free software "BAUDTOOL" 
-// to calculate the BTROBTR1 register for every bit rate and sample point.
-//
+/* Baud rate codes = BTR0/BTR1 register values for the CAN controller.
+ * You can define your own Baud rate with the BTROBTR1 register.
+ * Take a look at www.peak-system.com for their free software "BAUDTOOL"
+ * to calculate the BTROBTR1 register for every bit rate and sample point.
+ */
 #define PCAN_BAUD_1M             0x0014U  //!<   1 MBit/s
 #define PCAN_BAUD_800K           0x0016U  //!< 800 kBit/s
 #define PCAN_BAUD_500K           0x001CU  //!< 500 kBit/s
@@ -236,14 +252,14 @@ extern "C" {
 #define PCAN_BAUD_10K            0x672FU  //!<  10 kBit/s
 #define PCAN_BAUD_5K             0x7F7FU  //!<   5 kBit/s
 
-// Represents the configuration for a CAN bit rate
-// Note: 
-//    * Each parameter and its value must be separated with a '='.
-//    * Each pair of parameter/value must be separated using ','. 
-//
-// Example:
-//    f_clock=80000000,nom_brp=0,nom_tseg1=13,nom_tseg2=0,nom_sjw=0,data_brp=0,data_tseg1=13,data_tseg2=0,data_sjw=0
-//
+/* Represents the configuration for a CAN bit rate
+ * Note:
+ *    * Each parameter and its value must be separated with a '='.
+ *    * Each pair of parameter/value must be separated using ','.
+ *
+ * Example:
+ *    f_clock=80000000,nom_brp=10,nom_tseg1=5,nom_tseg2=2,nom_sjw=1,data_brp=4,data_tseg1=7,data_tseg2=2,data_sjw=1
+ */
 #define PCAN_BR_CLOCK            __T("f_clock")
 #define PCAN_BR_CLOCK_MHZ        __T("f_clock_mhz")
 #define PCAN_BR_NOM_BRP          __T("nom_brp")
@@ -260,7 +276,7 @@ extern "C" {
 /*  -----------  types  --------------------------------------------------
  */
 
-#define TPCANHandle              WORD  //!< PCAN hardware channel handle (ATTENTION: changed fron BYTE to WORD)
+#define TPCANHandle              WORD  //!< PCAN hardware channel handle (ATTENTION: changed from BYTE to WORD)
 #define TPCANStatus              DWORD //!< PCAN status/error code
 #define TPCANParameter           BYTE  //!< PCAN parameter to be read or set
 #define TPCANDevice              BYTE  //!< PCAN device
@@ -268,6 +284,8 @@ extern "C" {
 #define TPCANType                BYTE  //!< The type of PCAN hardware to be initialized
 #define TPCANMode                BYTE  //!< PCAN filter mode
 #define TPCANBaudrate            WORD  //!< PCAN Baud rate register value
+#define TPCANBitrateFD           LPSTR //!< PCAN-FD bit rate string
+#define TPCANTimestampFD         UINT64//!< timestamp of a received PCAN FD message
 
 /** PCAN message
  */
@@ -288,6 +306,16 @@ typedef struct tagTPCANTimestamp
     WORD   millis_overflow;    //!< Roll-arounds of millis
     WORD   micros;             //!< Microseconds: 0..999
 } TPCANTimestamp;
+
+/** PCAN message from a FD capable hardware
+ */
+typedef struct tagPCANMsgFD
+{
+    DWORD             ID;      //!< 11/29-bit message identifier
+    TPCANMessageType  MSGTYPE; //!< Type of the message
+    BYTE              DLC;     //!< Data Length Code of the message (0..15)
+    BYTE              DATA[64];//!< Data of the message (DATA[0]..DATA[63])
+} TPCANMsgFD;
 
 
 /*  -----------  variables  ----------------------------------------------
@@ -313,6 +341,29 @@ TPCANStatus CAN_Initialize(
         TPCANType HwType _DEF_ARG,
 		DWORD IOPort _DEF_ARG,
 		WORD Interrupt _DEF_ARG);
+
+/** @brief       Initializes a FD capable PCAN Channel.
+ *
+ *  @param[in]   Channel    The handle of a FD capable PCAN Channel.
+ *	@param[in]   BitrateFD  The speed for the communication (FD bit rate string).
+ *
+ *	@note        See PCAN_BR_* values
+ *	             <ul>
+ *	              <li>Parameter and values must be separated by '='.</li>
+ *	              <li>Couples of Parameter/value must be separated by ','.</li>
+ *	              <li>Following Parameter must be filled out: f_clock, data_brp, data_sjw, data_tseg1,
+ *	                  data_tseg2, nom_brp, nom_sjw, nom_tseg1, nom_tseg2.</li>
+ *	              <li>Following Parameters are optional (not used yet): data_ssp_offset, nom_sam.</li>
+ *	             </ul>
+ *	@note        Example:
+ *	@verbatim
+ *	             f_clock=80000000,nom_brp=10,nom_tseg1=5,nom_tseg2=2,nom_sjw=1,data_brp=4,data_tseg1=7,data_tseg2=2,data_sjw=1
+ *	@endverbatim
+ *  @returns     A TPCANStatus error code.
+ */
+TPCANStatus CAN_InitializeFD(
+		TPCANHandle Channel,
+		TPCANBitrateFD BitrateFD);
 
 /** @brief       Uninitializes one or all PCAN Channels initialized by CAN_Initialize.
  *
@@ -349,7 +400,7 @@ TPCANStatus CAN_GetStatus(
  *
  *  @param[in]   Channel          The handle of a PCAN Channel.
  *  @param[out]  MessageBuffer    A TPCANMsg structure buffer to store the CAN message.
- *  @param[out]  TimestampBuffer  A TPCANTimestamp structure buffer to get  the reception time of the message.
+ *  @param[out]  TimestampBuffer  A TPCANTimestamp structure buffer to get the reception time of the message.
  *                                If this value is not desired, this parameter should be passed as NULL.
  *
  *  @returns     A TPCANStatus error code.
@@ -358,6 +409,20 @@ TPCANStatus CAN_Read(
         TPCANHandle Channel,
         TPCANMsg* MessageBuffer,
         TPCANTimestamp* TimestampBuffer);
+
+/** @brief       Reads a CAN message from the receive queue of a FD capable PCAN Channel.
+ *
+ *  @param[in]   Channel          The handle of a FD capable PCAN Channel.
+ *  @param[out]  MessageBuffer    A TPCANMsgFD structure buffer to store the CAN message.
+ *  @param[out]  TimestampBuffer  A TPCANTimestampFD buffer to get the reception time of the message.
+ *                                If this value is not desired, this parameter should be passed as NULL.
+ *
+ *  @returns     A TPCANStatus error code.
+ */
+TPCANStatus CAN_ReadFD(
+		TPCANHandle Channel,
+		TPCANMsgFD* MessageBuffer,
+		TPCANTimestampFD* TimestampBuffer);
 
 /** @brief       Transmits a CAN message.
  *
@@ -369,6 +434,17 @@ TPCANStatus CAN_Read(
 TPCANStatus CAN_Write(
         TPCANHandle Channel,
         TPCANMsg* MessageBuffer);
+
+/** @brief       Transmits a CAN message over a FD capable PCAN Channel.
+ *
+ *  @param[in]   Channel        The handle of a FD capable PCAN Channel.
+ *  @param[in]   MessageBuffer  A TPCANMsgFD buffer with the message to be sent.
+ *
+ *  @returns     A TPCANStatus error code.
+ */
+TPCANStatus CAN_WriteFD(
+		TPCANHandle Channel,
+		TPCANMsgFD* MessageBuffer);
 
 /** @brief       Configures the reception filter.
  *
