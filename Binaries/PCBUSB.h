@@ -1,12 +1,12 @@
-/* -- $HeadURL: svn://192.168.2.40/MacCAN/PCANUSB/Library/trunk/drv/pcan_api.h $ --
+/* -- $HeadURL: https://uv-software.net/MacCAN/PCANUSB/Library/trunk/drv/pcan_api.h $ --
  *
  *	project   :  CAN - Controller Area Network
  *
  *	purpose   :  PCAN Application Programming Interface
  *
- *	copyright :  (C) 2012-2017 by UV Software, Berlin
+ *	copyright :  (C) 2012-2019 by UV Software, Berlin
  *
- *	compiler  :  Apple LLVM version 8.1.0 (clang-802.0.42)
+ *	compiler  :  Apple LLVM version 10.0.0 (clang-1000.11.45.5)
  *
  *	export    :  TPCANStatus CAN_Initialize(TPCANHandle Channel, TPCANBaudrate Btr0Btr1, TPCANType HwType, DWORD IOPort, WORD Interrupt);
  *	             TPCANStatus CAN_Uninitialize(TPCANHandle Channel);
@@ -43,7 +43,7 @@
  *	Up to 8 devices are supported.
  *
  *	Version of PCAN API:
- *	- Based on PEAK«s version of 06/21/2017
+ *	- Based on PEAKï¿½s version of 06/21/2017
  */
 
 #ifndef PCAN_API_H_INCLUDED

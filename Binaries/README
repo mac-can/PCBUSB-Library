@@ -1,12 +1,12 @@
 macOS Library for PCAN-USB Interfaces (x86_64)
 
-Copyright (C) 2013-2017 by UV Software, Berlin
+Copyright (C) 2013-2019 by UV Software, Berlin
 
 
 libPCBUSB
 ~~~~~~~~~
 
-The PCBUSB library realizes a 'PCAN-USB Driver for macOS' using Apple«s IOUSBKit.
+The PCBUSB library realizes a 'PCAN-USB Driver for macOS' using AppleÂ´s IOUSBKit.
 It supports up to 8 PCAN-USB or PCAN-USB FD devices from PEAK-System Technik.
 See the header-file PCBUSB.h for details.
 
@@ -16,6 +16,8 @@ Mac and macOS are trademarks of Apple Inc., registered in the U.S. and other cou
 This software is freeware without any warranty or support!
 
 Change-Log:
+- Version 0.8.1 of 09/27/2019:
+  Adapted trace-file headers to Peak's changes in version 4.3.4.246
 - Version 0.8 of 09/20/2017:
   Support of PCAN-USB FD devices in CAN 2.0 mode (CAN classic) and CAN FD mode!
   Adapted the API according to Peak's changes in version 4.2.0.134 and harmonized
