@@ -6,7 +6,7 @@
  *
  *	copyright :  (C) 2013 by UV Software, Berlin
  *
- *	compiler  :  GCC - GNU C Compiler (Darwin Kernel 11.4.0)
+ *	compiler  :  GCC - GNU C Compiler (4.2.1)
  *
  *	export    :  TPCANStatus CAN_Initialize(TPCANHandle Channel, TPCANBaudrate Btr0Btr1, TPCANType HwType, DWORD IOPort, WORD Interrupt);
  *	             TPCANStatus CAN_Uninitialize(TPCANHandle Channel);
@@ -31,10 +31,13 @@
  *	PCAN API  -  PEAK CAN Application Programming Interface
  *
  *	This Application Programming Interface (API) is a nearly compatible
- *	implementation of the PEAK PCANBasic DLL on Mac OS X (Darwin 11.4.0).
+ *	implementation of the PEAK PCANBasic DLL on OS X (Darwin Kernel 12.4.0).
  *
  *	Supported CAN Interfaces:
  *	- PCAN-USB (up to 8 device; only the 1st channel is supported)
+ *
+ *	Version of PCAN API:
+ *	- Based on PEAK«s version of 02/26/2013
  */
 
 #ifndef __PCAN_API_H
@@ -42,6 +45,9 @@
 
 #ifdef __cplusplus
 extern "C" {
+#	define _DEF_ARG =0
+#else
+#	define _DEF_ARG
 #endif
 
 /*  -----------  includes  -----------------------------------------------
@@ -101,7 +107,9 @@ extern "C" {
 #define PCAN_ERROR_ILLPARAMTYPE  0x04000  //!< Invalid parameter
 #define PCAN_ERROR_ILLPARAMVAL   0x08000  //!< Invalid parameter value
 #define PCAN_ERROR_UNKNOWN       0x10000  //!< Unknown error
+#define PCAN_ERROR_ILLDATA       0x20000  //!< Invalid data, function, or action
 #define PCAN_ERROR_INITIALIZE    0x40000  //!< Channel is not initialized
+#define PCAN_ERROR_ILLOPERATION  0x80000  //!< Invalid operation
 
 /* PCAN devices
  */
@@ -123,12 +131,19 @@ extern "C" {
 #define PCAN_CHANNEL_VERSION     0x06  //!< PCAN device channel version parameter
 #define PCAN_BUSOFF_AUTORESET    0x07  //!< PCAN Reset-On-Busoff parameter
 #define PCAN_LISTEN_ONLY         0x08  //!< PCAN Listen-Only parameter
-#define PCAN_LOG_LOCATION        0x09  //!< Directory path for trace files
-#define PCAN_LOG_STATUS          0x0A  //!< Debug-Trace activation status
+#define PCAN_LOG_LOCATION        0x09  //!< PCAN Directory path for log files
+#define PCAN_LOG_STATUS          0x0A  //!< Debug-Log activation status
 #define PCAN_LOG_CONFIGURE       0x0B  //!< Configuration of the debugged information (LOG_FUNCTION_***)
 #define PCAN_LOG_TEXT            0x0C  //!< Custom insertion of text into the log file
 #define PCAN_CHANNEL_CONDITION   0x0D  //!< Availability status of a PCAN-Channel
 #define PCAN_HARDWARE_NAME       0x0E  //!< PCAN hardware name parameter
+#define PCAN_RECEIVE_STATUS      0x0F  //!< Message reception status of a PCAN-Channel
+#define PCAN_CONTROLLER_NUMBER   0x10  //!< CAN-Controller number of a PCAN-Channel
+#define PCAN_TRACE_LOCATION      0x11  //!< Directory path for PCAN trace files
+#define PCAN_TRACE_STATUS        0x12  //!< CAN tracing activation status
+#define PCAN_TRACE_SIZE          0x13  //!< Configuration of the maximum file size of a CAN trace
+#define PCAN_TRACE_CONFIGURE     0x14  //!< Configuration of the trace file storing mode (TRACE_FILE_***)
+#define PCAN_CHANNEL_IDENTIFYING 0x15  //!< Physical identification of a USB based PCAN-Channel by blinking its associated LED
 #define PCAN_EXT_BTR0BTR1        0x80  //!< UVS: bit-timing register
 #define PCAN_EXT_TX_COUNTER      0x81  //!< UVS: number of transmitted frames
 #define PCAN_EXT_RX_COUNTER      0x82  //!< UVS: number of received frames
@@ -147,6 +162,20 @@ extern "C" {
 #define PCAN_CHANNEL_AVAILABLE   0x01  //!< The PCAN-Channel handle is available to be connected (Plug&Play Hardware: it means furthermore that the hardware is plugged-in)
 #define PCAN_CHANNEL_OCCUPIED    0x02  //!< The PCAN-Channel handle is valid, and is already being used
 
+#define LOG_FUNCTION_DEFAULT     0x00  //!< Logs system exceptions / errors
+#define LOG_FUNCTION_ENTRY       0x01  //!< Logs the entries to the PCAN-Basic API functions
+#define LOG_FUNCTION_PARAMETERS  0x02  //!< Logs the parameters passed to the PCAN-Basic API functions
+#define LOG_FUNCTION_LEAVE       0x04  //!< Logs the exits from the PCAN-Basic API functions
+#define LOG_FUNCTION_WRITE       0x08  //!< Logs the CAN messages passed to the CAN_Write function
+#define LOG_FUNCTION_READ        0x10  //!< Logs the CAN messages received within the CAN_Read function
+#define LOG_FUNCTION_ALL         0xFFFF//!< Logs all possible information within the PCAN-Basic API functions
+
+#define TRACE_FILE_SINGLE        0x00  //!< A single file is written until it size reaches PAN_TRACE_SIZE
+#define TRACE_FILE_SEGMENTED     0x01  //!< Traced data is distributed in several files with size PAN_TRACE_SIZE
+#define TRACE_FILE_DATE          0x02  //!< Includes the date into the name of the trace file
+#define TRACE_FILE_TIME          0x04  //!< Includes the start time into the name of the trace file
+#define TRACE_FILE_OVERWRITE     0x80  //!< Causes the overwriting of available traces (same name)
+
 /* PCAN message types
  */
 #define PCAN_MESSAGE_STANDARD    0x00  //!< The PCAN message is a CAN Standard Frame (11-bit identifier)
@@ -162,11 +191,16 @@ extern "C" {
 /* Baud rate codes = BTR0/BTR1 register values for the CAN controller.
  */
 #define PCAN_BAUD_1M             0x0014  //!<   1 MBit/s
+#define PCAN_BAUD_800K           0x0016  //!< 800 kBit/s
 #define PCAN_BAUD_500K           0x001C  //!< 500 kBit/s
 #define PCAN_BAUD_250K           0x011C  //!< 250 kBit/s
 #define PCAN_BAUD_125K           0x031C  //!< 125 kBit/s
 #define PCAN_BAUD_100K           0x432F  //!< 100 kBit/s
+#define PCAN_BAUD_95K            0xC34E  //!<  95,238 kBit/s
+#define PCAN_BAUD_83K            0x852B  //!<  83,333 kBit/s
 #define PCAN_BAUD_50K            0x472F  //!<  50 kBit/s
+#define PCAN_BAUD_47K            0x1414  //!<  47,619 kBit/s
+#define PCAN_BAUD_33K            0x8B2F  //!<  33,333 kBit/s
 #define PCAN_BAUD_20K            0x532F  //!<  20 kBit/s
 #define PCAN_BAUD_10K            0x672F  //!<  10 kBit/s
 #define PCAN_BAUD_5K             0x7F7F  //!<   5 kBit/s
@@ -225,9 +259,9 @@ typedef struct tagTPCANTimestamp
 TPCANStatus CAN_Initialize(
         TPCANHandle Channel,
         TPCANBaudrate Btr0Btr1,
-        TPCANType HwType,
-		DWORD IOPort,
-		WORD Interrupt);
+        TPCANType HwType _DEF_ARG,
+		DWORD IOPort _DEF_ARG,
+		WORD Interrupt _DEF_ARG);
 
 /** @brief       Uninitializes one or all PCAN Channels initialized by CAN_Initialize.
  *
@@ -288,7 +322,7 @@ TPCANStatus CAN_Write(
 /** @brief       Configures the reception filter.
  *
  *  @note        The message filter will be expanded with every call to  this function.
- *               If it is desired to reset the filter, please use the CAN_SetParameter function.
+ *               If it is desired to reset the filter, please use the CAN_SetValue function.
  *
  *  @param[in]   Channel    The handle of a PCAN Channel.
  *  @param[in]   FromID     The lowest CAN ID to be received.

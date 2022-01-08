@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ProjName=PCBUSB
-ProjVersion=0.1
+ProjVersion=0.2
 BaseDir=$(dirname $0)
 InstallDir=/usr/local/lib
 IncludeDir=/usr/local/include
@@ -17,6 +17,8 @@ then
 	if [ ! -f "$InstallDir/lib$ProjName.dylib" ]
 	then
 		ln -s "$InstallDir/lib$ProjName.$ProjVersion.dylib" "$InstallDir/lib$ProjName.dylib"
+	else
+		rm "$InstallDir/lib$ProjName.dylib"; ln -s "$InstallDir/lib$ProjName.$ProjVersion.dylib" "$InstallDir/lib$ProjName.dylib"
 	fi
 else
 	echo "error dylib"
