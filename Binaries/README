@@ -1,6 +1,6 @@
 macOS Library for PCAN-USB Interfaces (x86_64)
 
-Copyright (C) 2013-2020 by UV Software, Berlin
+Copyright (C) 2013-2021 by UV Software, Berlin
 
 
 libPCBUSB
@@ -16,6 +16,13 @@ Mac and macOS are trademarks of Apple Inc., registered in the U.S. and other cou
 This software is freeware without any warranty or support!
 
 Change-Log:
+- Version 0.10.1 of 12/06/2020:
+  Built library for x86_64 architecture (OS_X_Library_for_PCANUSB_v0.10.1.tar.gz).
+  Parameter PCAN_CHANNEL_VERSION displays machine architecture from utsname().
+  Fixed a bug with parameter PCAN_EXT_HARDWARE_VERSION for PCAN-USB Pro FD devices.
+  Solved an issue with file system relative paths that are not allowed in hardened
+  programs in Pythen 2.7 under macOS.
+  Updated the C++ examples: Blocking Read using system call select().
 - Version 0.10 of 12/22/2020:
   Support of PCAN-USB Pro FD devices, but only the first channel (CAN1).
   Set linker options -install_name, -compatibility_version, and -current_version.
