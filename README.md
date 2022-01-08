@@ -1,6 +1,6 @@
 ### macOS&reg; Library for PCAN-USB Interfaces
 
-Copyright &copy; 2013-2021 by UV Software, Berlin.
+Copyright &copy; 2013-2022 by UV Software, Berlin.
 
 # Running CAN and CAN FD on a Mac&reg;
 
@@ -16,13 +16,17 @@ The dynamic library libPCBUSB is running under macOS 10.13 and later (Intel arch
 The API is almost compatible to PEAK´s PCANBasic DLL on Windows.
 See the [MacCAN](https://www.mac-can.com/) website for details.
 
-#### Supported Devices
+### Supported Devices
 
 Only the following devices from PEAK-System Technik are supported:
 - PCAN-USB (product code: IPEH-002021, IPEH-002022)
 
 Since version 0.8 (Build 689 of September 20, 2017):
 - PCAN-USB FD (product code: IPEH-004022)
+
+### Known Bugs and Caveats
+
+For a list of known bugs and caveats see the README file delivered with each release.
 
 ## This and That
 
@@ -37,7 +41,8 @@ Please note the copyright and license agreement.
 ### Trademarks
 
 Mac and macOS are trademarks of Apple Inc., registered in the U.S. and other countries. \
-PCAN is a registered trademark of PEAK-System Technik GmbH, Darmstadt, Germany.
+PCAN is a registered trademark of PEAK-System Technik GmbH, Darmstadt, Germany. \
+All other company, product and service names mentioned herein are trademarks, registered trademarks or service marks of their respective owners.
 
 ### Hazard Note
 
@@ -45,13 +50,5 @@ _If you connect your CAN device to a real CAN network when using this library, y
 
 ### Contact
 
-Uwe Vogt \
-UV Software \
-Chausseestrasse 33a \
-10115 Berlin \
-Germany
-
 E-Mail: mailto://info@mac.can.com \
 Internet: https://www.mac-can.com
-
-##### *Happy CANgineering!*
