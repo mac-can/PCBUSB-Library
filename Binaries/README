@@ -1,6 +1,6 @@
 OS X Library for PCAN-USB Interfaces (x86_64)
 
-Copyright (C) 2013-2014 by UV Software, Berlin
+Copyright (C) 2013-2015 by UV Software, Berlin
 
 
 libPCBUSB
@@ -16,6 +16,10 @@ Mac and OS X are trademarks of Apple Inc., registered in the U.S. and other coun
 This software is freeware without any warranty or support!
 
 Change-Log:
+- Version 0.6 of 02/20/2015:
+  Parameter PCAN_RECEIVE_EVENT returns a file descriptor to realize 'blocking
+  read' by select() as on the Linux implementation of the PCAN-Basic API.
+  Added two C++ examples and one Python example using the PCBUSB library.   
 - Version 0.5 of 11/23/2014:
   Feature 'Reading/Writing of parameter PCAN_DEVICE_NUMBER' implemented.
   Fixed issue #104 'Hot plugging was not detected by the library/driver'.
@@ -51,8 +55,8 @@ Limitations:
 - CAN_FilterMessages:
   Message filtering is currently not supported.
 - CAN_GetValue/CAN_SetValue:
-  Still unsupported parameter are: PCAN_5VOLTS_POWER, PCAN_RECEIVE_EVENT,
-  PCAN_MESSAGE_FILTER, PCAN_BUSOFF_AUTORESET, PCAN_LOG_*, PCAN_RECEIVE_STATUS,
+  Still unsupported parameter are: PCAN_5VOLTS_POWER, PCAN_MESSAGE_FILTER,
+  PCAN_BUSOFF_AUTORESET, PCAN_LOG_*, PCAN_RECEIVE_STATUS,
   PCAN_CONTROLLER_NUMBER, PCAN_CHANNEL_IDENTIFYING.
 - Writing trace files:
   Only 100'000 frames can be recorded into one trace file.

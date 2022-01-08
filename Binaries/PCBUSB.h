@@ -4,9 +4,9 @@
  *
  *	purpose   :  PCAN Application Programming Interface
  *
- *	copyright :  (C) 2013-2014 by UV Software, Berlin
+ *	copyright :  (C) 2013-2015 by UV Software, Berlin
  *
- *	compiler  :  GCC - GNU C Compiler (4.2.1)
+ *	compiler  :  Apple LLVM Compiler (Version 5.1, GCC 4.2.1)
  *
  *	export    :  TPCANStatus CAN_Initialize(TPCANHandle Channel, TPCANBaudrate Btr0Btr1, TPCANType HwType, DWORD IOPort, WORD Interrupt);
  *	             TPCANStatus CAN_Uninitialize(TPCANHandle Channel);
