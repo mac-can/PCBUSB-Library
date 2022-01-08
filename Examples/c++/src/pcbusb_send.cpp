@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
 	unsigned long n = 0;
 
 	status = CAN_Initialize(PCAN_CHANNEL, PCAN_BAUDRATE, 0, 0, 0);
-	printf("Initialize CAN: 0x%lx\n", status);
+	printf("Initialize CAN: 0x%x\n", status);
 	if(status != PCAN_ERROR_OK) goto leave;
 
 	message.ID = 0x100;
