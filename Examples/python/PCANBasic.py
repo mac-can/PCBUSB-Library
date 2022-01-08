@@ -8,13 +8,13 @@
 #
 #  ------------------------------------------------------------------
 #  Author : Keneth Wagner
-#  Last change: 15.10.2020 Wagner
-#  Modified: 22.12.2020 by info@mac-can.com - to run on macOS 10.15
+#  Last change: 14.01.2021 Wagner
+#  Modified: 9.05.2021 info@mac-can.com
 #
 #  Language: Python 2.7, 3.7
 #  ------------------------------------------------------------------
 #
-#  Copyright (C) 1999-2020  PEAK-System Technik GmbH, Darmstadt
+#  Copyright (C) 1999-2021  PEAK-System Technik GmbH, Darmstadt
 #  more Info at http://www.peak-system.com
 #
 
@@ -23,6 +23,12 @@
 from ctypes import *
 from string import *
 import platform
+
+if platform.system() == "Darwin":
+    # To solve an issue with file system relative paths that are not allowed
+    # in hardened programs in Python 2.7 (under macOS).
+    # Installation path on macOS is '/usr/local/lib'
+    from ctypes.util import find_library
 
 #///////////////////////////////////////////////////////////
 # Type definitions
@@ -377,14 +383,25 @@ class PCANBasic:
       PCAN-Basic API class implementation
     """
     def __init__(self):
-        # Loads the PCANBasic.dll
+        # Loads the PCANBasic API
         #
         if platform.system() == 'Windows':
+            # Loads the API on Windows
             self.__m_dllBasic = windll.LoadLibrary("PCANBasic")
-        elif platform.system() == 'Darwin':
-            self.__m_dllBasic = cdll.LoadLibrary("libPCBUSB.dylib")
-        else:
+        elif platform.system() == 'Linux':
+            # Loads the API on Linux
             self.__m_dllBasic = cdll.LoadLibrary("libpcanbasic.so")
+        elif platform.system() == 'Darwin':
+            # Loads the API on Mac
+            #
+            # NOTE:
+            # ~~~~~
+            # The macOS library for PCAN-USB interfaces from PEAK-System, PCBUSB library,
+            # is a third-party software creaded and mantained by the MacCAN project. For
+            # information and support, please contact MacCAN (info@mac-can).
+            #
+           self.__m_dllBasic = cdll.LoadLibrary(find_library("libPCBUSB.dylib"))            
+
         if self.__m_dllBasic == None:
             print ("Exception: The PCAN-Basic DLL couldn't be loaded!")
 
@@ -798,18 +815,23 @@ class PCANBasic:
         """
             Finds a PCAN-Basic channel that matches with the given parameters
 
+        Remarks:
+
+          The return value of this method is a 2-touple, where
+          the first value is the result (TPCANStatus) of the method and
+          the second one a TPCANHandle value
+
         Parameters:
             Parameters   : A comma separated string contained pairs of parameter-name/value
                            to be matched within a PCAN-Basic channel
-            FoundChannel : Buffer for returning the PCAN-basic channel, when found
 
         Returns:
           A touple with 2 values
         """
         try:
-            mybuffer = create_string_buffer(256)
+            mybuffer = TPCANHandle(0)
             res = self.__m_dllBasic.CAN_LookUpChannel(Parameters,byref(mybuffer))
-            return TPCANStatus(res),mybuffer.value
+            return TPCANStatus(res),mybuffer
         except:
             print ("Exception on PCANBasic.LookUpChannel")
             raise
