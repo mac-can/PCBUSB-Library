@@ -4,9 +4,9 @@
  *
  *  purpose   :  PCAN Application Programming Interface
  *
- *  copyright :  (C) 2012-2021 by UV Software, Berlin
+ *  copyright :  (C) 2012-2022 by UV Software, Berlin
  *
- *  compiler  :  Apple clang version 12.0.5 (clang-1205.0.22.9)
+ *  compiler  :  Apple clang version 13.0.0 (clang-1300.0.29.30)
  *
  *  export    :  TPCANStatus CAN_Initialize(TPCANHandle Channel, TPCANBaudrate Btr0Btr1, TPCANType HwType, DWORD IOPort, WORD Interrupt);
  *               TPCANStatus CAN_Uninitialize(TPCANHandle Channel);
@@ -35,7 +35,7 @@
  *  PCAN API  -  PEAK CAN Application Programming Interface
  *
  *  This Application Programming Interface (API) is an almost compatible
- *  implementation of the PEAK PCANBasic DLL on macOS (x86_64 architecture).
+ *  implementation of the PEAK PCANBasic DLL on macOS (x86_64 and arm64).
  *
  *  Supported CAN Interfaces:
  *  - PCAN-USB
@@ -43,7 +43,7 @@
  *  Up to 8 devices are supported.
  *
  *  Version of PCAN API:
- *  - Based on PEAK's version of 10/15/2020
+ *  - Based on PEAK's version of 10/01/21
  */
 
 #ifndef PCAN_API_H_INCLUDED
@@ -191,6 +191,8 @@
 #define PCAN_FIRMWARE_VERSION         0x29U //!< Get the version of the firmware used by the device associated with a PCAN-Channel
 #define PCAN_ATTACHED_CHANNELS_COUNT  0x2AU //!< Get the amount of PCAN channels attached to a system
 #define PCAN_ATTACHED_CHANNELS        0x2BU //!< Get information about PCAN channels attached to a system
+#define PCAN_ALLOW_ECHO_FRAMES        0x2CU //!< Echo messages reception status within a PCAN-Channel
+#define PCAN_DEVICE_PART_NUMBER       0x2DU //!< Get the part number associated to a device
 #define PCAN_EXT_BTR0BTR1        0x80U  //!< UVS: bit-timing register
 #define PCAN_EXT_TX_COUNTER      0x81U  //!< UVS: number of transmitted frames
 #define PCAN_EXT_RX_COUNTER      0x82U  //!< UVS: number of received frames
@@ -241,7 +243,7 @@
 /* Other constants
  */
 #define MAX_LENGTH_HARDWARE_NAME   33   //!< Maximum length of the name of a device: 32 characters + terminator
-#define MAX_LENGTH_VERSION_STRING  18   //!< Maximum length of a version string: 17 characters + terminator
+#define MAX_LENGTH_VERSION_STRING  256  //!< Maximum length of a version string: 17 characters + terminator
 
 /* PCAN message types
  */
@@ -251,6 +253,7 @@
 #define PCAN_MESSAGE_FD          0x04U  //!< The PCAN message represents a FD frame in terms of CiA Specs
 #define PCAN_MESSAGE_BRS         0x08U  //!< The PCAN message represents a FD bit rate switch (CAN data at a higher bit rate)
 #define PCAN_MESSAGE_ESI         0x10U  //!< The PCAN message represents a FD error state indicator(CAN FD transmitter was error active)
+#define PCAN_MESSAGE_ECHO	     0x20U  //!< The PCAN message represents an echo CAN Frame
 #define PCAN_MESSAGE_ERRFRAME    0x40U  //!< The PCAN message represents an error frame
 #define PCAN_MESSAGE_STATUS      0x80U  //!< The PCAN message represents a PCAN status message
 
