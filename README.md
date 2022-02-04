@@ -4,7 +4,7 @@ Copyright &copy; 2013-2022 by UV Software, Berlin.
 
 # Running CAN and CAN FD on a Mac&reg;
 
-The PCBUSB library realizes a CAN to USB user-space driver under macOS for PCAN-USB interfaces from PEAK-System Technik, Darmstadt.
+The PCBUSB library realizes an USB to CAN user-space driver under macOS for PCAN-USB interfaces from PEAK-System Technik, Darmstadt.
 It supports up to 8 PCAN-USB and PCAN-USB FD devices.
 The library offers an easy to use API to read received CAN messages from a 64K message queue and to transmit CAN messages.
 Standard CAN frames (11-bit identifier) as well as extended CAN frames (29-bit identifier) are supported.
