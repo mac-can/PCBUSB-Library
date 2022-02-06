@@ -1,7 +1,7 @@
 ### macOS&reg; Library for PCAN-USB Interfaces
 
 *Copyright &copy; 2013-2022 by UV Software, Berlin.*\
-*All rights reseved.*
+*All rights reserved.*
 
 # Running CAN and CAN FD on a Mac&reg;
 
