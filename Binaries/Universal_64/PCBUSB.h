@@ -1,4 +1,4 @@
-/* -- $HeadURL: https://svn.uv-software.net/MacCAN/PCANUSB/Library/trunk/drv/pcan_api.h $ --
+/* -- $HeadURL: https://uv-software.net/MacCAN/PCANUSB/Library/trunk/drv/pcan_api.h $ --
  *
  *  project   :  CAN - Controller Area Network
  *

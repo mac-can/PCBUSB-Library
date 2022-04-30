@@ -1,25 +1,27 @@
 #!/bin/sh
 
 ProjName=PCBUSB
-ProjVersion=0.11
+ProjVersion=0.11.1
 BaseDir=$(dirname $0)
 InstallDir=/usr/local/lib
 IncludeDir=/usr/local/include
 
 if [ -f "$BaseDir/lib$ProjName.$ProjVersion.dylib" ]
 then
-	if [ -d "$InstallDir" ]
+	if [ ! -d "$InstallDir" ]
 	then
-		cp "$BaseDir/lib$ProjName.$ProjVersion.dylib" "$InstallDir/lib$ProjName.$ProjVersion.dylib"
-	else
-		mkdir "$InstallDir"; cp "$BaseDir/lib$ProjName.$ProjVersion.dylib" "$InstallDir/lib$ProjName.$ProjVersion.dylib"
+		mkdir "$InstallDir"
 	fi
-	if [ ! -f "$InstallDir/lib$ProjName.dylib" ]
+	if [ -f "$InstallDir/lib$ProjName.dylib" ]
 	then
-		ln -s "$InstallDir/lib$ProjName.$ProjVersion.dylib" "$InstallDir/lib$ProjName.dylib"
-	else
-		rm "$InstallDir/lib$ProjName.dylib"; ln -s "$InstallDir/lib$ProjName.$ProjVersion.dylib" "$InstallDir/lib$ProjName.dylib"
+		rm -f "$InstallDir/lib$ProjName.dylib"
 	fi
+	if [ -f "$InstallDir/lib$ProjName.$ProjVersion.dylib" ]
+	then
+		rm -f "$InstallDir/lib$ProjName.$ProjVersion.dylib"
+	fi
+	cp "$BaseDir/lib$ProjName.$ProjVersion.dylib" "$InstallDir/lib$ProjName.$ProjVersion.dylib"
+	ln -s "$InstallDir/lib$ProjName.$ProjVersion.dylib" "$InstallDir/lib$ProjName.dylib"
 	chmod 755 "$InstallDir/lib$ProjName.$ProjVersion.dylib"
 	chmod 755 "$InstallDir/lib$ProjName.dylib"
 else
