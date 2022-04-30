@@ -27,7 +27,8 @@ Since version 0.8 (Build 689 of September 20, 2017):
 
 ### Known Bugs and Caveats
 
-For a list of known bugs and caveats see the README file delivered with each release.
+For a list of known bugs and caveats see the README file delivered with each release
+and tab [Issues](https://github.com/mac-can/PCBUSB-Library/issues).
 
 ## This and That
 
