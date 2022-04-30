@@ -16,6 +16,12 @@ Mac and macOS are trademarks of Apple Inc., registered in the U.S. and other cou
 This software is freeware without any warranty or support!
 
 Change-Log:
+- Version 0.11.1 of 04/30/2022:
+  Fixed the Monterey issue ('Driver not loaded').
+  Fixed some findings from static code analysis.
+  Added `@rpath` to all build environments.
+  Improved the installation script.
+  Updated the README file.
 - Version 0.11 of 01/31/2022:
   Synchronized PCBUSB header with PCANBasic header for v4.6.0.
   Fixed a bug with PCAN_CHANNEL_CONDITION when used by another process.
@@ -145,9 +151,6 @@ Known bugs and caveats
   driver. It is not listed in the device list; its LED is turned off.
 - The device number cannot be changed for PCAN-USB FD devices and PCAN-USB Pro
   FD devices (function CAN_SetValue, parameter PCAN_DEVICE_ID).
-- When a device is used by another process this cannot be detected by a call
-  to CAN_GetValue with parameter PCAN_CHANNEL_CONDITION. The occupied device
-  is shown as PCAN_CHANNEL_AVAILABLE to the own process.
 - When a successfully initialized PCAN-USB device is physically removed from
   USB any subsequent call of API functions (e.g. CAN_Read) will not succeed
   even when the device is plugged in again. An error code will be returned in
