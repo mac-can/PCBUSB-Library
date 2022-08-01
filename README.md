@@ -1,6 +1,6 @@
 ### macOS&reg; Library for PCAN-USB Interfaces
 
-*Copyright &copy; 2013-2022 by UV Software, Berlin.*\
+*Copyright &copy;  2013-2022 by UV Software, Berlin.*\
 *All rights reserved.*
 
 # Running CAN and CAN FD on a Mac&reg;
@@ -44,7 +44,7 @@ Please note the copyright and license agreement.
 
 Mac and macOS are trademarks of Apple Inc., registered in the U.S. and other countries. \
 PCAN is a registered trademark of PEAK-System Technik GmbH, Darmstadt, Germany. \
-All other company, product and service names mentioned herein are trademarks, registered trademarks or service marks of their respective owners.
+All other company, product and service names mentioned herein may be trademarks, registered trademarks or service marks of their respective owners.
 
 ### Hazard Note
 
