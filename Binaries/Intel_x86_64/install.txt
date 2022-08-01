@@ -1,0 +1,49 @@
+macOS Library for PCAN-USB Interfaces
+
+Copyright (c) 2013-2022 by UV Software, Berlin
+
+
+How to install the PCBUSB-Library on Mac
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+1. Download the Library
+
+   First download the library either from the MacCAN homepage at <https://www.mac-can.com>
+   or from the GitHub repo at <https://github.com/mac-can/PCBUSB-Library/releases>.
+
+2. Install the Library
+
+   Now open a terminal to extract the artifacts and to install the library.
+
+_  Note: In the following example I've downloaded version 0.11.1 from the MacCAN homepage.
+         'makemake' is my username, 'uv-pc014mac' the name of my Mac.
+
+2.1 Extract the Artifacts
+
+    If you have downloaded the library as a tarball, type this:
+
+    makemake@uv-pc014mac ~ % tar -xvf ~/Downloads/macOS_Library_for_PCANUSB_v0.11.1.tar
+
+    If you have downloaded a compressed archive, then run this:
+
+    makemake@uv-pc014mac ~ % tar -xzvf ~/Downloads/macOS_Library_for_PCANUSB_v0.11.1.tar.gz
+
+2.2 Install the dylib
+
+    To install the dylib you need superuser privileges. Type this:
+
+    makemake@uv-pc014mac ~ % cd PCBUSB
+    makemake@uv-pc014mac PCBUSB % sudo /Users/<your-username>/PCBUSB/install.sh
+    Password: <your-password>
+
+3. Using the library
+
+   That's up to you.
+
+
+Contact
+~~~~~~~
+
+E-Mail:  mailto:info@mac-can.com
+Internet: http://www.mac-can.com
+   

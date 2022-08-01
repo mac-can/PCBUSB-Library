@@ -1,6 +1,6 @@
 macOS Library for PCAN-USB Interfaces
 
-Copyright (C) 2013-2022 by UV Software, Berlin
+Copyright (c) 2013-2022 by UV Software, Berlin
 
 
 libPCBUSB
@@ -16,6 +16,9 @@ Mac and macOS are trademarks of Apple Inc., registered in the U.S. and other cou
 This software is freeware without any warranty or support!
 
 Change-Log:
+- Version 0.11.2 of 07/30/2022:
+  Fixed the CAN FD URB issue ('Messages lost on high CAN FD bit-rates').
+  Added installation instruction (after all these years).
 - Version 0.11.1 of 04/30/2022:
   Fixed the Monterey issue ('Driver not loaded').
   Fixed some findings from static code analysis.
