@@ -19,6 +19,10 @@ def sigterm(signo, frame):
 pcan = PCANBasic()
 channel = PCAN_USBBUS1
 baudrate = PCAN_BAUD_250K
+result = pcan.GetValue(channel,PCAN_CHANNEL_VERSION)
+if result[0] == PCAN_ERROR_OK:
+    print(cast(result[1], c_char_p).value.decode("ascii"))
+
 result = pcan.Initialize(channel,baudrate)
 if result != PCAN_ERROR_OK:
     print("Error: {}".format(pcan.GetErrorText(result)))
