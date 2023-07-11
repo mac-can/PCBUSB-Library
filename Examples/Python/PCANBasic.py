@@ -8,8 +8,8 @@
 #
 #  ------------------------------------------------------------------
 #  Author : Keneth Wagner
-#  Last change: 2022-07-06
-#  Modified: 2022-11-22 info@mac-can.com
+#  Last change: 2022-11-23
+#  Modified: 2023-06-16 info@mac-can.com
 #
 #  Language: Python 2.7, 3.8
 #  ------------------------------------------------------------------
@@ -239,6 +239,7 @@ TRACE_FILE_SEGMENTED          = int(0x01)  # Traced data is distributed in sever
 TRACE_FILE_DATE               = int(0x02)  # Includes the date into the name of the trace file
 TRACE_FILE_TIME               = int(0x04)  # Includes the start time into the name of the trace file
 TRACE_FILE_OVERWRITE          = int(0x80)  # Causes the overwriting of available traces (same name)
+TRACE_FILE_DATA_LENGTH        = int(0x100) # Causes using the data length column ('l') instead of the DLC column ('L') in the trace file
                               
 FEATURE_FD_CAPABLE            = int(0x01)  # Device supports flexible data-rate (CAN-FD)
 FEATURE_DELAY_CAPABLE         = int(0x02)  # Device supports a delay between sending frames (FPGA based USB devices)
@@ -715,7 +716,7 @@ class PCANBasic:
         
         Returns:
           A touple with 2 values
-        """ 
+        """        
         try:
             if Parameter == PCAN_API_VERSION or Parameter == PCAN_HARDWARE_NAME or Parameter == PCAN_CHANNEL_VERSION or Parameter == PCAN_LOG_LOCATION or Parameter == PCAN_TRACE_LOCATION or Parameter == PCAN_BITRATE_INFO_FD or Parameter == PCAN_IP_ADDRESS or Parameter == PCAN_FIRMWARE_VERSION or Parameter == PCAN_DEVICE_PART_NUMBER:
                 mybuffer = create_string_buffer(256)
@@ -726,7 +727,7 @@ class PCANBasic:
                     return TPCANStatus(res[0]),
                 mybuffer = (TPCANChannelInformation * res[1])()
 
-            elif Parameter == PCAN_ACCEPTANCE_FILTER_11BIT or Parameter == PCAN_ACCEPTANCE_FILTER_29BIT:  # 2022-11-22: issue #375
+            elif Parameter == PCAN_ACCEPTANCE_FILTER_11BIT or Parameter == PCAN_ACCEPTANCE_FILTER_29BIT:
                 mybuffer = c_int64(0)
             
             else:
@@ -770,7 +771,7 @@ class PCANBasic:
         try:
             if Parameter == PCAN_LOG_LOCATION or Parameter == PCAN_LOG_TEXT or Parameter == PCAN_TRACE_LOCATION:
                 mybuffer = create_string_buffer(256)
-            elif Parameter == PCAN_ACCEPTANCE_FILTER_11BIT or Parameter == PCAN_ACCEPTANCE_FILTER_29BIT:  # 2022-11-22: issue #375
+            elif Parameter == PCAN_ACCEPTANCE_FILTER_11BIT or Parameter == PCAN_ACCEPTANCE_FILTER_29BIT:
                 mybuffer = c_int64(0)
             else:
                 mybuffer = c_int(0)
