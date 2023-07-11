@@ -6,7 +6,7 @@
 # Running CAN and CAN FD on a Mac&reg;
 
 The PCBUSB library realizes an USB to CAN user-space driver under macOS for PCAN-USB interfaces from PEAK-System Technik, Darmstadt.
-It supports up to 8 PCAN-USB and PCAN-USB FD devices.
+It supports up to 8 PCAN-USB or PCAN-USB FD devices.
 The library offers an easy to use API to read received CAN messages from a 64K message queue and to transmit CAN messages.
 Standard CAN frames (11-bit identifier) as well as extended CAN frames (29-bit identifier) are supported.
 The PCAN-USB FD device can be operated in CAN 2.0 and CAN FD mode.
@@ -26,13 +26,13 @@ See the [MacCAN](https://www.mac-can.com/) website for details.
 
 #### macOS Ventura
 
-- macOS Ventura (13.2) on a Mac mini (M1, 2020)
-- Apple clang version 14.0.0 (clang-1400.0.29.202)
-- Xcode Version 14.2 (14F18)
+- macOS Ventura (13.4.1) on a Mac mini (M1, 2020)
+- Apple clang version 14.0.3 (clang-1403.0.22.14.1)
+- Xcode Version 14.3.1 (14E300c)
 
 #### macOS Big Sur
 
-- macOS Big Sur (11.7.3) on a MacBook Pro (2019)
+- macOS Big Sur (11.7.8) on a MacBook Pro (2019)
 - Apple clang version 13.0.0 (clang-1300.0.29.30)
 - Xcode Version 13.2.1 (13C100)
 
