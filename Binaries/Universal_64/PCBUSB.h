@@ -6,7 +6,7 @@
  *
  *  copyright :  (C) 2012-2023 by UV Software, Berlin
  *
- *  compiler  :  Apple clang version 14.0.0 (clang-1400.0.29.202)
+ *  compiler  :  Apple clang version 14.0.3 (clang-1403.0.22.14.1)
  *
  *  export    :  TPCANStatus CAN_Initialize(TPCANHandle Channel, TPCANBaudrate Btr0Btr1, TPCANType HwType, DWORD IOPort, WORD Interrupt);
  *               TPCANStatus CAN_Uninitialize(TPCANHandle Channel);
@@ -38,12 +38,12 @@
  *  implementation of the PEAK PCANBasic DLL on macOS (x86_64 and arm64).
  *
  *  Supported CAN Interfaces:
- *  - PCAN-USB
- *  - PCAN-USB FD
- *  Up to 8 devices are supported.
+ *  - PCAN-USB (item no. IPEH-002021/002022)
+ *  - PCAN-USB FD (item no. IPEH-004022)
+ *  Up to 8 channel handles are supported.
  *
  *  Version of PCAN API:
- *  - Based on PEAK's version of 2022-07-06
+ *  - Based on PEAK's header of 2022-11-17
  */
 
 #ifndef PCAN_API_H_INCLUDED
@@ -232,6 +232,7 @@
 #define TRACE_FILE_DATE          0x02U  //!< Includes the date into the name of the trace file
 #define TRACE_FILE_TIME          0x04U  //!< Includes the start time into the name of the trace file
 #define TRACE_FILE_OVERWRITE     0x80U  //!< Causes the overwriting of available traces (same name)
+#define TRACE_FILE_DATA_LENGTH   0x100U //!< Causes using the data length column ('l') instead of the DLC column ('L') in the trace file
 
 #define FEATURE_FD_CAPABLE       0x01U  //!< Device supports flexible data-rate (CAN-FD)
 #define FEATURE_DELAY_CAPABLE    0x02U  //!< Device supports a delay between sending frames (FPGA based USB devices)
@@ -243,7 +244,7 @@
 /* Other constants
  */
 #define MAX_LENGTH_HARDWARE_NAME   33   //!< Maximum length of the name of a device: 32 characters + terminator
-#define MAX_LENGTH_VERSION_STRING  256  //!< Maximum length of a version string: 17 characters + terminator
+#define MAX_LENGTH_VERSION_STRING  256  //!< Maximum length of a version string: 255 characters + terminator
 
 /* PCAN message types
  */
@@ -313,18 +314,18 @@
 /*  -----------  types  --------------------------------------------------
  */
 
-#define TPCANHandle              WORD  //!< PCAN hardware channel handle
-#define TPCANStatus              DWORD //!< PCAN status/error code (ATTENTION: changed from 64-bit to 32-bit)
-#define TPCANParameter           BYTE  //!< PCAN parameter to be read or set
-#define TPCANDevice              BYTE  //!< PCAN device
-#define TPCANMessageType         BYTE  //!< The type of a PCAN message
-#define TPCANType                BYTE  //!< The type of PCAN hardware to be initialized
-#define TPCANMode                BYTE  //!< PCAN filter mode
-#define TPCANBaudrate            WORD  //!< PCAN Baud rate register value
-#define TPCANBitrateFD           LPSTR //!< PCAN-FD bit rate string
-#define TPCANTimestampFD         UINT64//!< timestamp of a received PCAN FD message
+#define TPCANHandle              WORD  //!< Represents a PCAN hardware channel handle
+#define TPCANStatus              DWORD //!< Represents a PCAN status/error code (ATTENTION: changed from 64-bit to 32-bit)
+#define TPCANParameter           BYTE  //!< Represents a PCAN parameter to be read or set
+#define TPCANDevice              BYTE  //!< Represents a PCAN device
+#define TPCANMessageType         BYTE  //!< Represents the type of a PCAN message
+#define TPCANType                BYTE  //!< Represents the type of PCAN hardware to be initialized
+#define TPCANMode                BYTE  //!< Represents a PCAN filter mode
+#define TPCANBaudrate            WORD  //!< Represents a PCAN Baud rate register value
+#define TPCANBitrateFD           LPSTR //!< Represents a PCAN-FD bit rate string
+#define TPCANTimestampFD         UINT64//!< Represents a timestamp of a received PCAN FD message
 
-/** PCAN message
+/** Represents a PCAN message
  */
 typedef struct tagTPCANMsg
 {
@@ -334,7 +335,7 @@ typedef struct tagTPCANMsg
     BYTE              DATA[8]; //!< Data of the message (DATA[0]..DATA[7])
 } TPCANMsg;
 
-/** Timestamp of a received PCAN message
+/** Represents a timestamp of a received PCAN message
  *  Total Microseconds = micros + 1000 * millis + 0x100000000 * 1000 * millis_overflow
  */
 typedef struct tagTPCANTimestamp
@@ -344,7 +345,7 @@ typedef struct tagTPCANTimestamp
     WORD   micros;             //!< Microseconds: 0..999
 } TPCANTimestamp;
 
-/** PCAN message from a FD capable hardware
+/** Represents a PCAN message from a FD capable hardware
  */
 typedef struct tagTPCANMsgFD
 {

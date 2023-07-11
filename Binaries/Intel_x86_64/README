@@ -16,6 +16,10 @@ Mac and macOS are trademarks of Apple Inc., registered in the U.S. and other cou
 This software is freeware without any warranty or support!
 
 Change-Log:
+- Version 0.12.1 of 09/23/2023:
+  Fixed a bug with endianess of 32-bit device id. (issue #384)
+  Reworked return values of CAN_Read(), CAN_ReadFD(), CAN_Write(), CAN_WriteFD()
+  Reset USB pipe #4 after write timed out (CAN Write stalled; macOS 11 and higher)
 - Version 0.12 of 01/31/2023:
   Realized setting of device id. for PCAN-USB FD devices
   Reworked status frame handling:

@@ -4,7 +4,7 @@
 //  Wrapper for libPCBUSB
 //
 //  Created by Uwe Vogt on 18.08.13.
-//  Copyright (c) 2013-2022 UV Software. All rights reserved.
+//  Copyright (c) 2013-2023 UV Software. All rights reserved.
 //
 //  This software is freeware without any warranty or support!
 //
@@ -47,11 +47,9 @@ typedef TPCANStatus (*CAN_FilterMessages_t)(TPCANHandle Channel, DWORD FromID, D
 typedef TPCANStatus (*CAN_GetValue_t)(TPCANHandle Channel, TPCANParameter Parameter, void* Buffer, DWORD BufferLength);
 typedef TPCANStatus (*CAN_SetValue_t)(TPCANHandle Channel, TPCANParameter Parameter, void* Buffer, DWORD BufferLength);
 typedef TPCANStatus (*CAN_GetErrorText_t)(TPCANStatus Error, WORD Language, char* Buffer);
-#ifndef CAN_2_0_ONLY
 typedef TPCANStatus (*CAN_InitializeFD_t)(TPCANHandle Channel, TPCANBitrateFD BitrateFD);
 typedef TPCANStatus (*CAN_ReadFD_t)(TPCANHandle Channel, TPCANMsgFD* MessageBuffer, TPCANTimestampFD* TimestampBuffer);
 typedef TPCANStatus (*CAN_WriteFD_t)(TPCANHandle Channel, TPCANMsgFD* MessageBuffer);
-#endif
 typedef TPCANStatus (*CAN_LookUpChannel_t)(LPSTR Parameters, TPCANHandle* FoundChannel);
 
 static CAN_Initialize_t fpCAN_Initialize = NULL;
@@ -64,50 +62,46 @@ static CAN_FilterMessages_t fpCAN_FilterMessages = NULL;
 static CAN_GetValue_t fpCAN_GetValue = NULL;
 static CAN_SetValue_t fpCAN_SetValue = NULL;
 static CAN_GetErrorText_t fpCAN_GetErrorText = NULL;
-#ifndef CAN_2_0_ONLY
 static CAN_InitializeFD_t fpCAN_InitializeFD = NULL;
 static CAN_ReadFD_t fpCAN_ReadFD = NULL;
 static CAN_WriteFD_t fpCAN_WriteFD = NULL;
-#endif
 static CAN_LookUpChannel_t fpCAN_LookUpChannel = NULL;
 
 static void *hLibrary = NULL;
 
 static int LoadLibrary(void) {
-    if(!hLibrary) {
+    if (!hLibrary) {
         errno = 0;
         hLibrary = dlopen("libPCBUSB.dylib", RTLD_LAZY);
-        if(!hLibrary)
+        if (!hLibrary)
             return -1;
-        if((fpCAN_Initialize = (CAN_Initialize_t)dlsym(hLibrary, "CAN_Initialize")) == NULL)
+        if ((fpCAN_Initialize = (CAN_Initialize_t)dlsym(hLibrary, "CAN_Initialize")) == NULL)
             goto err;
-        if((fpCAN_Uninitialize = (CAN_Uninitialize_t)dlsym(hLibrary, "CAN_Uninitialize")) == NULL)
+        if ((fpCAN_Uninitialize = (CAN_Uninitialize_t)dlsym(hLibrary, "CAN_Uninitialize")) == NULL)
             goto err;
-        if((fpCAN_Reset = (CAN_Reset_t)dlsym(hLibrary, "CAN_Reset")) == NULL)
+        if ((fpCAN_Reset = (CAN_Reset_t)dlsym(hLibrary, "CAN_Reset")) == NULL)
             goto err;
-        if((fpCAN_GetStatus = (CAN_GetStatus_t)dlsym(hLibrary, "CAN_GetStatus")) == NULL)
+        if ((fpCAN_GetStatus = (CAN_GetStatus_t)dlsym(hLibrary, "CAN_GetStatus")) == NULL)
             goto err;
-        if((fpCAN_Read = (CAN_Read_t)dlsym(hLibrary, "CAN_Read")) == NULL)
+        if ((fpCAN_Read = (CAN_Read_t)dlsym(hLibrary, "CAN_Read")) == NULL)
             goto err;
-        if((fpCAN_Write = (CAN_Write_t)dlsym(hLibrary, "CAN_Write")) == NULL)
+        if ((fpCAN_Write = (CAN_Write_t)dlsym(hLibrary, "CAN_Write")) == NULL)
             goto err;
-        if((fpCAN_FilterMessages = (CAN_FilterMessages_t)dlsym(hLibrary, "CAN_FilterMessages")) == NULL)
+        if ((fpCAN_FilterMessages = (CAN_FilterMessages_t)dlsym(hLibrary, "CAN_FilterMessages")) == NULL)
             goto err;
-        if((fpCAN_GetValue = (CAN_GetValue_t)dlsym(hLibrary, "CAN_GetValue")) == NULL)
+        if ((fpCAN_GetValue = (CAN_GetValue_t)dlsym(hLibrary, "CAN_GetValue")) == NULL)
             goto err;
-        if((fpCAN_SetValue = (CAN_SetValue_t)dlsym(hLibrary, "CAN_SetValue")) == NULL)
+        if ((fpCAN_SetValue = (CAN_SetValue_t)dlsym(hLibrary, "CAN_SetValue")) == NULL)
             goto err;
-        if((fpCAN_GetErrorText = (CAN_GetErrorText_t)dlsym(hLibrary, "CAN_GetErrorText")) == NULL)
+        if ((fpCAN_GetErrorText = (CAN_GetErrorText_t)dlsym(hLibrary, "CAN_GetErrorText")) == NULL)
             goto err;
-#ifndef CAN_2_0_ONLY
-        if((fpCAN_InitializeFD = (CAN_InitializeFD_t)dlsym(hLibrary, "CAN_InitializeFD")) == NULL)
+        if ((fpCAN_InitializeFD = (CAN_InitializeFD_t)dlsym(hLibrary, "CAN_InitializeFD")) == NULL)
             goto err;
-        if((fpCAN_ReadFD = (CAN_ReadFD_t)dlsym(hLibrary, "CAN_ReadFD")) == NULL)
+        if ((fpCAN_ReadFD = (CAN_ReadFD_t)dlsym(hLibrary, "CAN_ReadFD")) == NULL)
             goto err;
-        if((fpCAN_WriteFD = (CAN_WriteFD_t)dlsym(hLibrary, "CAN_WriteFD")) == NULL)
+        if ((fpCAN_WriteFD = (CAN_WriteFD_t)dlsym(hLibrary, "CAN_WriteFD")) == NULL)
             goto err;
-#endif
-        if((fpCAN_LookUpChannel = (CAN_LookUpChannel_t)dlsym(hLibrary, "CAN_LookUpChannel")) == NULL)
+        if ((fpCAN_LookUpChannel = (CAN_LookUpChannel_t)dlsym(hLibrary, "CAN_LookUpChannel")) == NULL)
             fpCAN_LookUpChannel = NULL;  // New function w/o implementation: accept the NULL pointer!
     }
     return 0;
@@ -134,131 +128,129 @@ err:
 }
 
 TPCANStatus CAN_Initialize(TPCANHandle Channel, TPCANBaudrate Btr0Btr1, TPCANType HwType, DWORD IOPort, WORD Interrupt) {
-    if(LoadLibrary() != 0)
+    if (LoadLibrary() != 0)
         return PCAN_ERROR_NODRIVER;
-    if(fpCAN_Initialize)
-    return fpCAN_Initialize(Channel, Btr0Btr1, HwType, IOPort, Interrupt);
+    if (fpCAN_Initialize)
+        return fpCAN_Initialize(Channel, Btr0Btr1, HwType, IOPort, Interrupt);
     else
-    return PCAN_ERROR_UNKNOWN;
+        return PCAN_ERROR_UNKNOWN;
 }
 
 TPCANStatus CAN_Uninitialize(TPCANHandle Channel) {
-    //if(LoadLibrary() != 0)
+    //if (LoadLibrary() != 0)
     //    return PCAN_ERROR_NODRIVER;
-    if(fpCAN_Uninitialize)
-    return fpCAN_Uninitialize(Channel);
+    if (fpCAN_Uninitialize)
+        return fpCAN_Uninitialize(Channel);
     else
-    return PCAN_ERROR_UNKNOWN;
+        return PCAN_ERROR_UNKNOWN;
 }
 
 TPCANStatus CAN_Reset(TPCANHandle Channel) {
-    if(LoadLibrary() != 0)
+    if (LoadLibrary() != 0)
         return PCAN_ERROR_NODRIVER;
-    if(fpCAN_Reset)
-    return fpCAN_Reset(Channel);
+    if (fpCAN_Reset)
+        return fpCAN_Reset(Channel);
     else
-    return PCAN_ERROR_UNKNOWN;
+        return PCAN_ERROR_UNKNOWN;
 }
 
 TPCANStatus CAN_GetStatus(TPCANHandle Channel) {
-    if(LoadLibrary() != 0)
+    if (LoadLibrary() != 0)
         return PCAN_ERROR_NODRIVER;
-    if(fpCAN_GetStatus)
-    return fpCAN_GetStatus(Channel);
+    if (fpCAN_GetStatus)
+        return fpCAN_GetStatus(Channel);
     else
-    return PCAN_ERROR_UNKNOWN;
+        return PCAN_ERROR_UNKNOWN;
 }
 
 TPCANStatus CAN_Read(TPCANHandle Channel, TPCANMsg* MessageBuffer, TPCANTimestamp* TimestampBuffer) {
-    if(LoadLibrary() != 0)
+    if (LoadLibrary() != 0)
         return PCAN_ERROR_NODRIVER;
-    if(fpCAN_Read)
-    return fpCAN_Read(Channel, MessageBuffer, TimestampBuffer);
+    if (fpCAN_Read)
+        return fpCAN_Read(Channel, MessageBuffer, TimestampBuffer);
     else
-    return PCAN_ERROR_UNKNOWN;
+        return PCAN_ERROR_UNKNOWN;
 }
 
 TPCANStatus CAN_Write(TPCANHandle Channel, TPCANMsg* MessageBuffer) {
-    if(LoadLibrary() != 0)
+    if (LoadLibrary() != 0)
         return PCAN_ERROR_NODRIVER;
-    if(fpCAN_Write)
-    return fpCAN_Write(Channel, MessageBuffer);
+    if (fpCAN_Write)
+        return fpCAN_Write(Channel, MessageBuffer);
     else
-    return PCAN_ERROR_UNKNOWN;
+        return PCAN_ERROR_UNKNOWN;
 }
 
 TPCANStatus CAN_FilterMessages(TPCANHandle Channel, DWORD FromID, DWORD ToID, TPCANMode Mode) {
-    if(LoadLibrary() != 0)
+    if (LoadLibrary() != 0)
         return PCAN_ERROR_NODRIVER;
-    if(fpCAN_FilterMessages)
-    return fpCAN_FilterMessages(Channel, FromID, ToID, Mode);
+    if (fpCAN_FilterMessages)
+        return fpCAN_FilterMessages(Channel, FromID, ToID, Mode);
     else
-    return PCAN_ERROR_UNKNOWN;
+        return PCAN_ERROR_UNKNOWN;
 }
 
 TPCANStatus CAN_GetValue(TPCANHandle Channel, TPCANParameter Parameter, void* Buffer, DWORD BufferLength) {
-    if(LoadLibrary() != 0)
+    if (LoadLibrary() != 0)
         return PCAN_ERROR_NODRIVER;
-    if(fpCAN_GetValue)
-    return fpCAN_GetValue(Channel, Parameter, Buffer, BufferLength);
+    if (fpCAN_GetValue)
+        return fpCAN_GetValue(Channel, Parameter, Buffer, BufferLength);
     else
-    return PCAN_ERROR_UNKNOWN;
+        return PCAN_ERROR_UNKNOWN;
 }
 
 TPCANStatus CAN_SetValue(TPCANHandle Channel, TPCANParameter Parameter, void* Buffer, DWORD BufferLength) {
-    if(LoadLibrary() != 0)
+    if (LoadLibrary() != 0)
         return PCAN_ERROR_NODRIVER;
-    if(fpCAN_SetValue)
-    return fpCAN_SetValue(Channel, Parameter, Buffer, BufferLength);
+    if (fpCAN_SetValue)
+        return fpCAN_SetValue(Channel, Parameter, Buffer, BufferLength);
     else
-    return PCAN_ERROR_UNKNOWN;
+        return PCAN_ERROR_UNKNOWN;
 }
 
 TPCANStatus CAN_GetErrorText(TPCANStatus Error, WORD Language, char* Buffer) {
-    if(LoadLibrary() != 0) {
-        if(Buffer)
-            strcpy(Buffer, "PCANUSB library could not be loaded");
+    if (LoadLibrary() != 0) {
+        if (Buffer)
+            strcpy(Buffer, "PCBUSB library could not be loaded");
         return PCAN_ERROR_NODRIVER;
     }
-    if(fpCAN_GetErrorText)
-    return fpCAN_GetErrorText(Error, Language, Buffer);
+    if (fpCAN_GetErrorText)
+        return fpCAN_GetErrorText(Error, Language, Buffer);
     else
-    return PCAN_ERROR_UNKNOWN;
+        return PCAN_ERROR_UNKNOWN;
 }
 
-#ifndef CAN_2_0_ONLY
 TPCANStatus CAN_InitializeFD(TPCANHandle Channel, TPCANBitrateFD BitrateFD) {
-    if(LoadLibrary() != 0)
+    if (LoadLibrary() != 0)
         return PCAN_ERROR_NODRIVER;
-    if(fpCAN_InitializeFD)
-    return fpCAN_InitializeFD(Channel, BitrateFD);
+    if (fpCAN_InitializeFD)
+        return fpCAN_InitializeFD(Channel, BitrateFD);
     else
-    return PCAN_ERROR_UNKNOWN;
+        return PCAN_ERROR_UNKNOWN;
 }
 
 TPCANStatus CAN_ReadFD(TPCANHandle Channel, TPCANMsgFD* MessageBuffer, TPCANTimestampFD* TimestampBuffer) {
-    if(LoadLibrary() != 0)
+    if (LoadLibrary() != 0)
         return PCAN_ERROR_NODRIVER;
-    if(fpCAN_ReadFD)
-    return fpCAN_ReadFD(Channel, MessageBuffer, TimestampBuffer);
+    if (fpCAN_ReadFD)
+        return fpCAN_ReadFD(Channel, MessageBuffer, TimestampBuffer);
     else
-    return PCAN_ERROR_UNKNOWN;
+        return PCAN_ERROR_UNKNOWN;
 }
 
 TPCANStatus CAN_WriteFD(TPCANHandle Channel, TPCANMsgFD* MessageBuffer) {
-    if(LoadLibrary() != 0)
+    if (LoadLibrary() != 0)
         return PCAN_ERROR_NODRIVER;
-    if(fpCAN_WriteFD)
-    return fpCAN_WriteFD(Channel, MessageBuffer);
+    if (fpCAN_WriteFD)
+        return fpCAN_WriteFD(Channel, MessageBuffer);
     else
-    return PCAN_ERROR_UNKNOWN;
+        return PCAN_ERROR_UNKNOWN;
 }
-#endif
 
 TPCANStatus CAN_LookUpChannel(LPSTR Parameters, TPCANHandle* FoundChannel) {
-    if(LoadLibrary() != 0)
+    if (LoadLibrary() != 0)
         return PCAN_ERROR_NODRIVER;
-    if(fpCAN_LookUpChannel)
+    if (fpCAN_LookUpChannel)
         return fpCAN_LookUpChannel(Parameters, FoundChannel);
     else
         return PCAN_ERROR_UNKNOWN;
