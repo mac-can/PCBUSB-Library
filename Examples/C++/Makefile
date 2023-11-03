@@ -3,7 +3,7 @@ LIB = PCBUSB
 SRC = src
 
 CFLAGS +=
-LDFLAGS +=
+LDFLAGS += -rpath /usr/local/lib
 
 TARGET1 = pcbusb_send
 FILES1 = $(SRC)/$(TARGET1).cpp

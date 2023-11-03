@@ -8,13 +8,13 @@
 #
 #  ------------------------------------------------------------------
 #  Author : Keneth Wagner
-#  Last change: 2022-11-23
+#  Last change: 2023-08-28
 #  Modified: 2023-06-16 info@mac-can.com
 #
 #  Language: Python 2.7, 3.8
 #  ------------------------------------------------------------------
 #
-#  Copyright (C) 1999-2022  PEAK-System Technik GmbH, Darmstadt
+#  Copyright (C) 1999-2023  PEAK-System Technik GmbH, Darmstadt
 #  more Info at http://www.peak-system.com 
 #
 
@@ -209,6 +209,7 @@ PCAN_ATTACHED_CHANNELS_COUNT   = TPCANParameter(0x2A)  # Get the amount of PCAN 
 PCAN_ATTACHED_CHANNELS         = TPCANParameter(0x2B)  # Get information about PCAN channels attached to a system
 PCAN_ALLOW_ECHO_FRAMES         = TPCANParameter(0x2C)  # Echo messages reception status within a PCAN-Channel
 PCAN_DEVICE_PART_NUMBER        = TPCANParameter(0x2D)  # Get the part number associated to a device
+PCAN_HARD_RESET_STATUS         = TPCANParameter(0x2E)  # Activation status of hard reset processing via PCANBasic.Reset calls
 
 # DEPRECATED parameters
 #
@@ -340,12 +341,12 @@ class TPCANMsg (Structure):
                  ("DATA",    c_ubyte * 8) ]     # Data of the message (DATA[0]..DATA[7])
 
 # Represents a timestamp of a received PCAN message
-# Total Microseconds = micros + 1000 * millis + 0x100000000 * 1000 * millis_overflow
+# Total Microseconds = micros + (1000 * millis) + (0x100000000 * 1000 * millis_overflow)
 #
 class TPCANTimestamp (Structure):
     """
     Represents a timestamp of a received PCAN message
-    Total Microseconds = micros + 1000 * millis + 0x100000000 * 1000 * millis_overflow
+    Total Microseconds = micros + (1000 * millis) + (0x100000000 * 1000 * millis_overflow)
     """
     _fields_ = [ ("millis",          c_uint),    # Base-value: milliseconds: 0.. 2^32-1
                  ("millis_overflow", c_ushort),  # Roll-arounds of millis
@@ -404,7 +405,7 @@ class PCANBasic:
             # is a third-party software creaded and mantained by the MacCAN project. For
             # information and support, please contact MacCAN (info@mac-can).
             #
-           self.__m_dllBasic = cdll.LoadLibrary(find_library("libPCBUSB.dylib"))            
+           self.__m_dllBasic = cdll.LoadLibrary(find_library("libPCBUSB.dylib"))
 
         if self.__m_dllBasic == None:
             print ("Exception: The PCAN-Basic DLL couldn't be loaded!")
