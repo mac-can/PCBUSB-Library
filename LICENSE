@@ -1,4 +1,4 @@
-macOS Library for PCAN-USB Interfaces - Copyright (C) 2013-2023 by UV Software
+macOS Library for PCAN-USB Interfaces - Copyright (C) 2013-2024 by UV Software
 All rights reserved.
 
 
@@ -111,6 +111,7 @@ agreement between the parties with respect to the use of the SOFTWARE
 PRODUCT and supersedes all prior or contemporaneous understandings 
 regarding such subject matter. No amendment to or modification of this 
 EULA will be binding unless in writing and signed by UV Software.
+
 
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
