@@ -4,7 +4,7 @@
 //  Wrapper for libPCBUSB
 //
 //  Created by Uwe Vogt on 18.08.13.
-//  Copyright (c) 2013-2023 UV Software. All rights reserved.
+//  Copyright (c) 2013-2024 UV Software. All rights reserved.
 //
 //  This software is freeware without any warranty or support!
 //
@@ -31,7 +31,13 @@
 //  entire risk arising out of use or performance of the SOFTWARE PRODUCT
 //  remains with you.
 //
+#if defined(__APPLE__)
 #include "PCBUSB.h"
+#define CAN_LIBRARY  "libPCBUSB.dylib"
+#else
+#include "PCANBasic.h"
+#define CAN_LIBRARY  "libpcanbasic.so"
+#endif
 #include <stdio.h>
 #include <dlfcn.h>
 #include <errno.h>
@@ -72,7 +78,7 @@ static void *hLibrary = NULL;
 static int LoadLibrary(void) {
     if (!hLibrary) {
         errno = 0;
-        hLibrary = dlopen("libPCBUSB.dylib", RTLD_LAZY);
+        hLibrary = dlopen(CAN_LIBRARY, RTLD_LAZY);
         if (!hLibrary)
             return -1;
         if ((fpCAN_Initialize = (CAN_Initialize_t)dlsym(hLibrary, "CAN_Initialize")) == NULL)

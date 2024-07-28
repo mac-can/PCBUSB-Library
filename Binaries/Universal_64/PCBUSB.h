@@ -4,9 +4,9 @@
  *
  *  purpose   :  PCAN Application Programming Interface
  *
- *  copyright :  (C) 2012-2023 by UV Software, Berlin
+ *  copyright :  (C) 2012-2024 by UV Software, Berlin
  *
- *  compiler  :  Apple clang version 15.0.0 (clang-1500.0.40.1)
+ *  compiler  :  Apple clang version 15.0.0 (clang-1500.3.9.4)
  *
  *  export    :  TPCANStatus CAN_Initialize(TPCANHandle Channel, TPCANBaudrate Btr0Btr1, TPCANType HwType, DWORD IOPort, WORD Interrupt);
  *               TPCANStatus CAN_Uninitialize(TPCANHandle Channel);
@@ -43,7 +43,7 @@
  *  Up to 8 channel handles are supported.
  *
  *  Version of PCAN API:
- *  - Based on PEAK's version of 2023-08-28
+ *  - Based on PEAK's version of 2024-01-26
  */
 
 #ifndef PCAN_API_H_INCLUDED
@@ -194,6 +194,7 @@
 #define PCAN_ALLOW_ECHO_FRAMES        0x2CU //!< Echo messages reception status within a PCAN-Channel
 #define PCAN_DEVICE_PART_NUMBER       0x2DU //!< Get the part number associated to a device
 #define PCAN_HARD_RESET_STATUS        0x2EU //!< Activation status of hard reset processing via CAN_Reset calls
+#define PCAN_LAN_CHANNEL_DIRECTION    0x2FU //!< Communication direction of a PCAN-Channel representing a PCAN-LAN interface
 #define PCAN_EXT_BTR0BTR1        0x80U  //!< UVS: bit-timing register
 #define PCAN_EXT_TX_COUNTER      0x81U  //!< UVS: number of transmitted frames
 #define PCAN_EXT_RX_COUNTER      0x82U  //!< UVS: number of received frames
@@ -241,6 +242,10 @@
 
 #define SERVICE_STATUS_STOPPED   0x01U  //!< The service is not running
 #define SERVICE_STATUS_RUNNING   0x04U  //!< The service is running
+
+#define LAN_DIRECTION_READ       0x01U  //!< The PCAN-Channel is limited to incoming communication only
+#define LAN_DIRECTION_WRITE      0x02U  //!< The PCAN-Channel is limited to outgoing communication only
+#define LAN_DIRECTION_READ_WRITE (LAN_DIRECTION_READ | LAN_DIRECTION_WRITE) // The PCAN-Channel communication is bidirectional 
 
 /* Other constants
  */

@@ -1,6 +1,6 @@
 macOS Library for PCAN-USB Interfaces
 
-Copyright (c) 2013-2023 by UV Software, Berlin
+Copyright (c) 2013-2024 by UV Software, Berlin
 
 
 libPCBUSB
@@ -16,6 +16,17 @@ Mac and macOS are trademarks of Apple Inc., registered in the U.S. and other cou
 This software is freeware without any warranty or support!
 
 Change-Log:
+- Version 0.13 of 07/28/2024:
+  Synchronized PCBUSB header with PCANBasic header from PEAK's version 4.9.0
+  Realized acceptance filtering by setting parameter:
+  - PCAN_ACCEPTANCE_FILTER_11BIT (default = 0x00000000000007FF)
+  - PCAN_ACCEPTANCE_FILTER_29BIT (default = 0x000000001FFFFFFF)
+  - PCAN_MESSAGE_FILTER (default = PCAN_FILTER_OPEN)
+  - PCAN_RECEIVE_STATUS (default = PCAN_PARAMETER_ON)
+  Realized suppression of status frames by setting parameter:
+  - PCAN_ALLOW_STATUS_FRAMES (default = PCAN_PARAMETER_ON)
+  Realized suppression of remote frames by setting parameter:
+  - PCAN_ALLOW_RTR_FRAMES (default = PCAN_PARAMETER_ON)
 - Version 0.12.2 of 11/01/2023:
   Synchronized PCBUSB header with PCANBasic header from PEAK's version 4.8.0
   Fixed a bug with pipe numbers for PCAN-USB FD devices (hardware version 6.0)
@@ -148,31 +159,30 @@ Change-Log:
   Initial revision
 
 Limitations:
-- CAN_Initialize():
+- CAN_Initialize() resp. CAN_InitializeFD():
   Only the following devices are supported:
   - PCAN-USB (item no. IPEH-002021 and IPEH-002022)
   - PCAN-USB FD (item no. IPEH-004022)
   - PCAN-USB Pro FD (item no. IPEH-004061), but only the first channel (CAN1)
-- CAN_Write():
+- CAN_Write() resp. CAN_WriteFD():
   Transmission of the given message on the CAN bus is not acknowledged by
   the USB interface.
   A transmission queue like in the Windows driver is not realized.
 - CAN_FilterMessages():
-  Message filtering is currently not supported.
+  Filter ranges are not supported. Acceptance filtering is supported by setting
+  parameter (PCAN_ACCEPTANCE_FILTER_11BIT or PCAN_ACCEPTANCE_FILTER_29BIT).
 - CAN_GetValue():
-  Still unsupported parameter are: PCAN_5VOLTS_POWER, PCAN_MESSAGE_FILTER,
+  Still unsupported parameter are: PCAN_5VOLTS_POWER, 
   PCAN_BUSOFF_AUTORESET, PCAN_LOG_LOCATION, PCAN_LOG_STATUS, PCAN_LOG_CONFIGURE,
   PCAN_LOG_TEXT, PCAN_CHANNEL_IDENTIFYING, PCAN_BITRATE_ADAPTING, PCAN_IP_ADDRESS,
-  PCAN_LAN_SERVICE_STATUS, PCAN_INTERFRAME_DELAY, PCAN_ACCEPTANCE_FILTER_11BIT,
-  PCAN_ACCEPTANCE_FILTER_29BIT, PCAN_ATTACHED_CHANNELS_COUNT, PCAN_ATTACHED_CHANNELS,
-  PCAN_HARD_RESET_STATUS.
+  PCAN_LAN_SERVICE_STATUS, PCAN_INTERFRAME_DELAY, PCAN_ATTACHED_CHANNELS_COUNT,
+  PCAN_ATTACHED_CHANNELS, PCAN_HARD_RESET_STATUS, PCAN_LAN_CHANNEL_DIRECTION.
 - CAN_SetValue():
   Still unsupported parameter are: PCAN_5VOLTS_POWER, PCAN_RECEIVE_EVENT,
-  PCAN_MESSAGE_FILTER, PCAN_BUSOFF_AUTORESET, PCAN_LOG_LOCATION, PCAN_LOG_STATUS,
-  PCAN_LOG_CONFIGURE, PCAN_LOG_TEXT, PCAN_CHANNEL_IDENTIFYING, PCAN_BITRATE_ADAPTING,
+  PCAN_BUSOFF_AUTORESET, PCAN_LOG_LOCATION, PCAN_LOG_STATUS, PCAN_LOG_CONFIGURE,
+  PCAN_LOG_TEXT, PCAN_CHANNEL_IDENTIFYING, PCAN_BITRATE_ADAPTING,
   PCAN_ALLOW_STATUS_FRAMES, PCAN_ALLOW_RTR_FRAMES, PCAN_ALLOW_ERROR_FRAMES,
-  PCAN_INTERFRAME_DELAY, PCAN_ACCEPTANCE_FILTER_11BIT, PCAN_ACCEPTANCE_FILTER_29BIT,
-  PCAN_ALLOW_ECHO_FRAMES, PCAN_HARD_RESET_STATUS.
+  PCAN_INTERFRAME_DELAY, PCAN_ALLOW_ECHO_FRAMES, PCAN_HARD_RESET_STATUS.
 - CAN_LookUpChannel():
   Channel searching is currently not supported.
 - Writing into a trace file:
